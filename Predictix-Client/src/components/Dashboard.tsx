@@ -47,7 +47,7 @@ const demoTheme = createTheme({
   },
 });
 
-function DemoPageContent({ pathname }: { pathname: string }) {
+function DemoPageContent() {
   return (
     <Box
       sx={{
@@ -58,16 +58,11 @@ function DemoPageContent({ pathname }: { pathname: string }) {
         textAlign: "center",
       }}
     >
-      <Typography>Dashboard content for {pathname}</Typography>
     </Box>
   );
 }
 
 interface DemoProps {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * Remove this when copying and pasting into your project.
-   */
   window?: () => Window;
 }
 
@@ -84,7 +79,6 @@ export function DashboardLayoutSidebarCollapsed(props: DemoProps) {
     };
   }, [pathname]);
 
-  // Remove this const when copying and pasting into your project.
   const demoWindow = window !== undefined ? window() : undefined;
 
   return (
@@ -92,7 +86,7 @@ export function DashboardLayoutSidebarCollapsed(props: DemoProps) {
       navigation={NAVIGATION}
       branding={{
         logo: <img src={logo} alt="MUI logo" style={{ width: '100%', height: '150px', objectFit: 'contain' }} />,
-        title: "",
+        title: "Predictix",
         homeUrl: "/toolpad/core/introduction",
       }}
       router={router}
@@ -100,7 +94,7 @@ export function DashboardLayoutSidebarCollapsed(props: DemoProps) {
       window={demoWindow}
     >
       <DashboardLayout defaultSidebarCollapsed>
-        <DemoPageContent pathname={pathname} />
+        <DemoPageContent />
       </DashboardLayout>
     </AppProvider>
   );
