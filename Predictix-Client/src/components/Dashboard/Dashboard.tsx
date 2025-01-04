@@ -11,7 +11,7 @@ import {
   type Navigation,
 } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 import PageContent from "./PageContent";
 
 const NAVIGATION: Navigation = [
