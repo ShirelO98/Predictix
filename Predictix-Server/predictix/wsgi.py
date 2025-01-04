@@ -1,5 +1,5 @@
 """
-WSGI config for Predictix project.
+WSGI config for predictix project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Predictix.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'predictix.settings')
 
 application = get_wsgi_application()
