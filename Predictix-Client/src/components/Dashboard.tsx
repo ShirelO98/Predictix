@@ -3,8 +3,9 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { createTheme } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import BuildIcon from "@mui/icons-material/Build";
 import {
   AppProvider,
   type Router,
@@ -13,6 +14,7 @@ import {
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import logo from "../assets/logo.png";
 
+// Navigation items
 const NAVIGATION: Navigation = [
   {
     segment: "dashboard",
@@ -20,17 +22,23 @@ const NAVIGATION: Navigation = [
     icon: <DashboardIcon />,
   },
   {
-    segment: "orders",
-    title: "Orders",
-    icon: <ShoppingCartIcon />,
+    segment: "alerts",
+    title: "Alerts",
+    icon: <NotificationImportantIcon />, // Icon for alerts
   },
   {
     segment: "reports",
     title: "Reports",
-    icon: <BarChartIcon />,
+    icon: <BarChartIcon />, // Icon for reports
+  },
+  {
+    segment: "machines",
+    title: "Machines",
+    icon: <BuildIcon />, // Icon for machines
   },
 ];
 
+// Theme configuration
 const demoTheme = createTheme({
   cssVariables: {
     colorSchemeSelector: "data-toolpad-color-scheme",
@@ -47,25 +55,48 @@ const demoTheme = createTheme({
   },
 });
 
-function DemoPageContent() {
-  return (
-    <Box
-      sx={{
-        py: 4,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        textAlign: "center",
-      }}
-    >
-    </Box>
-  );
+// Content for each section
+function PageContent({ pathname }: { pathname: string }) {
+  switch (pathname) {
+    case "/dashboard":
+      return (
+        <Typography variant="h4" align="center" sx={{ mt: 4 }}>
+          Welcome to the Dashboard!
+        </Typography>
+      );
+    case "/alerts":
+      return (
+        <Typography variant="h4" align="center" sx={{ mt: 4 }}>
+          Alerts Section: View all active and past alerts here.
+        </Typography>
+      );
+    case "/reports":
+      return (
+        <Typography variant="h4" align="center" sx={{ mt: 4 }}>
+          Reports Section: Generate and view reports here.
+        </Typography>
+      );
+    case "/machines":
+      return (
+        <Typography variant="h4" align="center" sx={{ mt: 4 }}>
+          Machines Section: Monitor machine statuses here.
+        </Typography>
+      );
+    default:
+      return (
+        <Typography variant="h4" align="center" sx={{ mt: 4 }}>
+          Page Not Found
+        </Typography>
+      );
+  }
 }
 
+// Component props interface
 interface DemoProps {
   window?: () => Window;
 }
 
+// Main component
 export function DashboardLayoutSidebarCollapsed(props: DemoProps) {
   const { window } = props;
 
@@ -85,7 +116,13 @@ export function DashboardLayoutSidebarCollapsed(props: DemoProps) {
     <AppProvider
       navigation={NAVIGATION}
       branding={{
-        logo: <img src={logo} alt="MUI logo" style={{ width: '100%', height: '150px', objectFit: 'contain' }} />,
+        logo: (
+          <img
+            src={logo}
+            alt="MUI logo"
+            style={{ width: "100%", height: "150px", objectFit: "contain" }}
+          />
+        ),
         title: "Predictix",
         homeUrl: "/toolpad/core/introduction",
       }}
@@ -94,7 +131,9 @@ export function DashboardLayoutSidebarCollapsed(props: DemoProps) {
       window={demoWindow}
     >
       <DashboardLayout defaultSidebarCollapsed>
-        <DemoPageContent />
+        <Box sx={{ py: 4 }}>
+          <PageContent pathname={pathname} />
+        </Box>
       </DashboardLayout>
     </AppProvider>
   );
