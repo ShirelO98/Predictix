@@ -8,10 +8,10 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        {/* דף התחברות */}
+        {/* Login */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* דשבורד (מוגן) */}
+        {/* Protected Dashbord */}
         <Route
           path="/dashboard/*"
           element={
@@ -21,7 +21,7 @@ export default function App() {
           }
         />
 
-        {/* נתיב ברירת מחדל */}
+        {/* Default path*/}
         <Route path="*" element={<LoginPage />} />
       </Routes>
     </Router>
