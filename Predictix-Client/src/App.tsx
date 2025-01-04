@@ -1,12 +1,29 @@
-import { useState } from "react";
-import { DashboardLayoutSidebarCollapsed as Dashboard } from "./components/Dashboard/Dashboard";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import LoginPage from "./components/Login/LoginPage";
+import Dashboard from "./components/Dashboard/Dashboard";
+import ProtectedRoute from "./components/Dashboard/ProtectedRoute";
 
-function App() {
+export default function App() {
   return (
-    <>
-      <Dashboard />
-    </>
+    <Router>
+      <Routes>
+        {/* דף התחברות */}
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* דשבורד (מוגן) */}
+        <Route
+          path="/dashboard/*"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* נתיב ברירת מחדל */}
+        <Route path="*" element={<LoginPage />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;

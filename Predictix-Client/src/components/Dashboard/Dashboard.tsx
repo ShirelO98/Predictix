@@ -12,39 +12,52 @@ import {
 } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import logo from "../../assets/logo.png";
-import PageContent from "./PageContent";
+import PageContent from "../Login/PageContent";
+import LogoutButton from "../Login/LogoutButton";
 
 const NAVIGATION: Navigation = [
   {
     segment: "dashboard",
     title: "Dashboard",
-    icon: <DashboardIcon />,
+    icon: <DashboardIcon color="primary" />,
   },
   {
     segment: "alerts",
     title: "Alerts",
-    icon: <NotificationImportantIcon />,
+    icon: <NotificationImportantIcon color="secondary" />,
   },
   {
     segment: "reports",
     title: "Reports",
-    icon: <BarChartIcon />,
+    icon: <BarChartIcon color="action" />,
   },
   {
     segment: "machines",
     title: "Machines",
-    icon: <BuildIcon />,
+    icon: <BuildIcon color="disabled" />,
   },
 ];
 
-export function DashboardLayoutSidebarCollapsed() {
-  const [pathname, setPathname] = React.useState("/dashboard");
+export default function DashboardLayoutSidebarCollapsed() {
+  const [pathname, setPathname] = React.useState(
+    localStorage.getItem("currentPath") || "/dashboard"
+  );
 
   const router = React.useMemo<Router>(() => ({
     pathname,
     searchParams: new URLSearchParams(),
-    navigate: (path) => setPathname(String(path)),
+    navigate: (path) => {
+      setPathname(String(path));
+      localStorage.setItem("currentPath", String(path));
+    },
   }), [pathname]);
+
+  React.useEffect(() => {
+    const isAuthenticated = !!localStorage.getItem("authToken");
+    if (!isAuthenticated) {
+      setPathname("/login");
+    }
+  }, []);
 
   return (
     <AppProvider
@@ -57,6 +70,10 @@ export function DashboardLayoutSidebarCollapsed() {
       router={router}
     >
       <DashboardLayout defaultSidebarCollapsed>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: 2, py: 1 }}>
+          <Typography variant="h6">Welcome to Predictix Dashboard</Typography>
+          <LogoutButton />
+        </Box>
         <Box sx={{ py: 4 }}>
           <PageContent pathname={pathname} />
         </Box>

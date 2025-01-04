@@ -1,8 +1,8 @@
 import React from "react";
-import DashboardHome from "./DashboardHome";
-import AlertsSection from "./AlertsSection";
-import ReportsSection from "./ReportsSection";
-import MachinesSection from "./MachinesSection";
+import DashboardHome from "../Dashboard/DashboardHome";
+import AlertsSection from "../Dashboard/AlertsSection";
+import ReportsSection from "../Dashboard/ReportsSection";
+import MachinesSection from "../Dashboard/MachinesSection";
 
 export default function PageContent({ pathname }: { pathname: string }) {
   switch (pathname) {
