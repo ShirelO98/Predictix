@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import KeyMetrics from "./subcomponents/KeyMetrics";
@@ -7,23 +7,55 @@ import RecentAlerts from "./subcomponents/RecentAlerts";
 import MachineBank from "./subcomponents/MachineBank";
 import MachineGrid from "./subcomponents/MachineGrid";
 import { Machine } from "../../types/machine";
+import axios from "axios";
+
+const machinesFromDatabase: Machine[] = [
+  {
+    machineID: "M001",
+    machineName: "Machine A",
+    vibration: 5.5,
+    temperature: 75.3,
+    pressure: 3.1,
+    status: "Running",
+    lastMaintenanceDate: "2023-12-10",
+    nextMaintenanceDate: "2024-01-15",
+    upTime: 120,
+    downTime: 5,
+  },
+  {
+    machineID: "M002",
+    machineName: "Machine B",
+    vibration: 3.2,
+    temperature: 68.7,
+    pressure: 2.9,
+    status: "Stopped",
+    lastMaintenanceDate: "2023-12-05",
+    nextMaintenanceDate: "2024-01-10",
+    upTime: 200,
+    downTime: 15,
+  },
+];
 
 export default function DashboardHome() {
   const [factoryMachines, setFactoryMachines] = useState<Machine[]>([]);
+  const [bankMachines, setBankMachines] = useState<Machine[]>([]);
+  useEffect(() => {
+    // Fetch all machines from the database - Shirel...
+    axios.get("http://localhost:3000/getAllMachines").then((response) =>
+      setBankMachines(response.data)
+    )
+  }, []);
 
   // Add machine to the grid, preventing duplicates
-  const handleAddMachine = (machine: Machine) => {
-    setFactoryMachines((prev) => {
-      if (!prev.some((m) => m.machineID === machine.machineID)) {
-        return [...prev, machine];
-      }
-      return prev; // If duplicate, return the current state
-    });
+  const handleAddMachineToCompany = (machine: Machine) => {
+    setFactoryMachines((prev) => [...prev, machine]);
+    setBankMachines((prev) => prev.filter((m) => m.machineID !== machine.machineID));
   };
 
   // Remove machine from the grid
-  const handleRemoveMachine = (machineID: string) => {
-    setFactoryMachines((prev) => prev.filter((machine) => machine.machineID !== machineID));
+  const handleRemoveMachineFromCompany = (machine: Machine) => {
+    setBankMachines((prev) => [...prev, machine]);
+    setFactoryMachines((prev) => prev.filter((m) => m.machineID !== machine.machineID));
   };
 
   return (
@@ -39,11 +71,11 @@ export default function DashboardHome() {
       <Box sx={{ display: "flex", gap: 4 }}>
         <MachineGrid
           machines={factoryMachines}
-          onMachineDrop={handleAddMachine}
-          onMachineRemove={handleRemoveMachine}
+          onMachineDrop={handleAddMachineToCompany}
+          onMachineRemove={handleRemoveMachineFromCompany}
         />
 
-        <MachineBank onMachineSelect={handleAddMachine} />
+        <MachineBank onMachineSelect={handleAddMachineToCompany} machines={bankMachines} />
       </Box>
 
       <Box sx={{ mt: 4 }}>
