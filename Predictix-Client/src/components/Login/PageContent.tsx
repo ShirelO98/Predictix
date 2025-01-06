@@ -7,7 +7,7 @@ import MachinesSection from "../Dashboard/MachinesSection";
 export default function PageContent({ pathname }: { pathname: string }) {
   switch (pathname) {
     case "/dashboard":
-      return <DashboardHome />;
+      return <DashboardHome/>;
     case "/alerts":
       return <AlertsSection />;
     case "/reports":

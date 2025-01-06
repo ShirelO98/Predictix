@@ -1,6 +1,6 @@
 import React from "react";
-import { useDrag } from "react-dnd";
 import { Box, Card, CardContent, Typography } from "@mui/material";
+import { useDrag } from "react-dnd";
 import { Machine } from "../../../types/machine";
 
 interface MachineBankProps {
@@ -36,15 +36,24 @@ const machinesFromDatabase: Machine[] = [
 
 const MachineBank: React.FC<MachineBankProps> = ({ onMachineSelect }) => {
   return (
-    <Box sx={{ display: "flex", gap: "10px", overflowX: "scroll", padding: "10px" }}>
-      {machinesFromDatabase.map((machine) => (
-        <DraggableMachine key={machine.machineID} machine={machine} />
-      ))}
+    <Box sx={{ padding: "20px", border: "1px solid #ccc", borderRadius: "10px", backgroundColor: "#f9f9f9" }}>
+      <Typography variant="h5" gutterBottom>
+        Machine Bank
+      </Typography>
+
+      <Box sx={{ display: "flex", gap: "10px", overflowX: "scroll", padding: "10px" }}>
+        {machinesFromDatabase.map((machine) => (
+          <DraggableMachine key={machine.machineID} machine={machine} onSelect={onMachineSelect} />
+        ))}
+      </Box>
     </Box>
   );
 };
 
-const DraggableMachine: React.FC<{ machine: Machine }> = ({ machine }) => {
+const DraggableMachine: React.FC<{ machine: Machine; onSelect: (machine: Machine) => void }> = ({
+  machine,
+  onSelect,
+}) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "machine",
     item: machine,
@@ -56,6 +65,7 @@ const DraggableMachine: React.FC<{ machine: Machine }> = ({ machine }) => {
   return (
     <Card
       ref={drag}
+      onClick={() => onSelect(machine)} 
       sx={{
         width: "200px",
         opacity: isDragging ? 0.5 : 1,
