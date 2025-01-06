@@ -46,16 +46,9 @@ export default function DashboardHome() {
         <MachineBank onMachineSelect={handleAddMachine} />
       </Box>
 
-      <Box sx={{ mt: 4 }}>
-        <MachineStatusGraph />
-      </Box>
+      
 
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Recent Alerts
-        </Typography>
-        <RecentAlerts />
-      </Box>
+      
     </Box>
   );
 }
