@@ -11,37 +11,51 @@ import { Machine } from "../../types/machine";
 export default function DashboardHome() {
   const [factoryMachines, setFactoryMachines] = useState<Machine[]>([]);
 
-  // Handle adding machines to the grid
+  // Add machine to the grid, preventing duplicates
   const handleAddMachine = (machine: Machine) => {
-    setFactoryMachines((prev) => [...prev, machine]);
+    setFactoryMachines((prev) => {
+      if (!prev.some((m) => m.machineID === machine.machineID)) {
+        return [...prev, machine];
+      }
+      return prev; // If duplicate, return the current state
+    });
+  };
+
+  // Remove machine from the grid
+  const handleRemoveMachine = (machineID: string) => {
+    setFactoryMachines((prev) => prev.filter((machine) => machine.machineID !== machineID));
   };
 
   return (
     <Box sx={{ p: 4 }}>
-      {/* Title */}
       <Typography variant="h4" gutterBottom>
         Dashboard Overview
       </Typography>
 
-      {/* Key Metrics Section */}
       <Box sx={{ mb: 4 }}>
         <KeyMetrics />
       </Box>
 
-      {/* Machine Grid and Machine Bank */}
       <Box sx={{ display: "flex", gap: 4 }}>
-        {/* Factory Grid */}
         <MachineGrid
           machines={factoryMachines}
-          onMachineDrop={(machineId, newPosition) => {
-            console.log(`Machine ${machineId} moved to position ${newPosition}`);
-          }}
+          onMachineDrop={handleAddMachine}
+          onMachineRemove={handleRemoveMachine}
         />
 
-        {/* Machine Bank */}
         <MachineBank onMachineSelect={handleAddMachine} />
       </Box>
 
+      <Box sx={{ mt: 4 }}>
+        <MachineStatusGraph />
+      </Box>
+
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Recent Alerts
+        </Typography>
+        <RecentAlerts />
+      </Box>
     </Box>
   );
 }
