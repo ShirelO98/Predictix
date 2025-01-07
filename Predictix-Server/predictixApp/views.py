@@ -27,6 +27,86 @@ def overview(request):
 
     return JsonResponse(response)
 
+
+def alerts(request):
+    # Query machines with "Failed" status and convert to dictionaries
+    failed_machines = list(
+        Machine.objects.filter(status="Failed").values(
+            "machine_id", "machine_name", "status", "vibration", "temperature", "pressure"
+        )
+    )
+
+    # Query machines with critical metrics (e.g., vibration > 2.0, temperature > 100, pressure > 150)
+    critical_machines = list(
+        Machine.objects.filter(
+            vibration__gt=2.0
+        ).values(
+            "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
+        )
+    ) + list(
+        Machine.objects.filter(
+            temperature__gt=100
+        ).values(
+            "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
+        )
+    ) + list(
+        Machine.objects.filter(
+            pressure__gt=150
+        ).values(
+            "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
+        )
+    )
+
+    # Combine the two lists
+    alerts = failed_machines + critical_machines
+
+    # Return the data as JSON
+    return JsonResponse(alerts, safe=False)
+
+def scheduled_maintenance(request):
+    # Calculate the date range for the next 7 days
+    today = datetime.now().date()
+    next_week = today + timedelta(days=7)
+
+    # Filter machines with scheduled maintenance in the next 7 days
+    machines = Machine.objects.filter(
+        next_maintenance_date__range=(today, next_week)
+    ).values(
+        "machine_id", "machine_name", "status", "next_maintenance_date"
+    )
+
+    return JsonResponse(list(machines), safe=False)
+
+
+def scheduled_maintenance(request):
+    # Calculate the date range for the next 7 days
+    today = datetime.now().date()
+    next_week = today + timedelta(days=7)
+
+    # Filter machines with scheduled maintenance in the next 7 days
+    machines = Machine.objects.filter(
+        next_maintenance_date__range=(today, next_week)
+    ).values(
+        "machine_id", "machine_name", "status", "next_maintenance_date"
+    )
+
+    return JsonResponse(list(machines), safe=False)
+
+
+def critical_machines(request):
+    # Filter machines in "Needs Maintenance" status and order by highest down_time
+    machines = Machine.objects.filter(status="Needs Maintenance").order_by(
+        "-down_time"
+    )[:10]  # Get the top 10 machines with the highest down_time
+
+    # Select specific fields to include in the response
+    machines_data = machines.values(
+        "machine_id", "machine_name", "status", "down_time", "vibration", "temperature", "pressure"
+    )
+
+    return JsonResponse(list(machines_data), safe=False)
+
+
 def predict_failure(request):
     # Load model and scaler
     model = joblib.load("ml/model.pkl")
