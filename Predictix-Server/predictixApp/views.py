@@ -3,12 +3,29 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from .models import Machine
 import joblib
-from django.http import JsonResponse
+from django.db.models import Sum
+from datetime import datetime, timedelta
 
 def get_machines(request):
     machines = Machine.objects.all().values()
     return JsonResponse(list(machines), safe=False)
 
+def overview(request):
+    today = datetime.now().date()
+    next_week = today + timedelta(days=7)
+    total_machines = Machine.objects.count()
+    needs_maintenance_machines = Machine.objects.filter(status="Needs Maintenance").count()
+    total_down_time = Machine.objects.filter(next_maintenance_date__range=(today, next_week)).aggregate(
+        total_down_time=Sum("down_time")
+    )["total_down_time"]
+
+    response = {
+        "total_machines": total_machines,
+        "needs_maintenance_machines": needs_maintenance_machines,
+        "down_time_hours_next_7_days": total_down_time or 0,  # אם אין נתונים, נחזיר 0
+    }
+
+    return JsonResponse(response)
 
 def predict_failure(request):
     # Load model and scaler

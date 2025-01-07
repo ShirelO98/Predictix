@@ -39,12 +39,12 @@ const machinesFromDatabase: Machine[] = [
 export default function DashboardHome() {
   const [factoryMachines, setFactoryMachines] = useState<Machine[]>([]);
   const [bankMachines, setBankMachines] = useState<Machine[]>([]);
-  useEffect(() => {
-    // Fetch all machines from the database - Shirel...
-    axios.get("http://localhost:3000/getAllMachines").then((response) =>
-      setBankMachines(response.data)
-    )
-  }, []);
+  // useEffect(() => {
+  //   // Fetch all machines from the database - Shirel...
+  //   axios.get("http://localhost:3000/getAllMachines").then((response) =>
+  //     setBankMachines(response.data)
+  //   )
+  // }, []);
 
   // Add machine to the grid, preventing duplicates
   const handleAddMachineToCompany = (machine: Machine) => {
