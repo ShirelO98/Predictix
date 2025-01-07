@@ -14,5 +14,6 @@ class Machine(models.Model):
 
     def __str__(self):
         return self.machine_name
-
-    
+class ModelTrainingMetadata(models.Model):
+    last_training_count = models.IntegerField(default=0)  
+    last_trained_at = models.DateTimeField(auto_now=True)
