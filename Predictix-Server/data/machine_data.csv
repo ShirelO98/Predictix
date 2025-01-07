@@ -1,4 +1,4 @@
-MachineID,MachineName,Vibration,Temperature,Pressure,Status,LastMaintenanceDate,NextMaintenanceDate,UpTime,DownTime
+machine_id,machine_name,vibration,temperature,pressure,status,last_maintenance_date,next_maintenance_date,up_time,down_time
 M037,Machine-M037,2.14,108,129,Operational,2024-01-05,2025-05-27,2944,0
 M034,Machine-M034,0.25,104,169,Needs Maintenance,2024-12-14,2025-03-09,9008,64
 M043,Machine-M043,2.66,95,122,Operational,2024-04-04,2025-02-08,4594,0
