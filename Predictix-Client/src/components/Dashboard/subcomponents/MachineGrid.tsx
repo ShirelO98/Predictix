@@ -8,7 +8,7 @@ import { Machine } from "../../../types/machine";
 interface MachineGridProps {
   machines: Machine[];
   onMachineDrop: (machine: Machine) => void;
-  onMachineRemove: (machineID: string) => void;
+  onMachineRemove: (machine: Machine) => void;
 }
 
 const MachineGrid: React.FC<MachineGridProps> = ({ machines, onMachineDrop, onMachineRemove }) => {
@@ -38,7 +38,7 @@ const MachineGrid: React.FC<MachineGridProps> = ({ machines, onMachineDrop, onMa
           <Grid2 key={machine.machineID} >
             <MachineCard
               machine={machine}
-              onRemove={() => onMachineRemove(machine.machineID)}
+              onRemove={() => onMachineRemove(machine)}
             />
           </Grid2>
         ))}
