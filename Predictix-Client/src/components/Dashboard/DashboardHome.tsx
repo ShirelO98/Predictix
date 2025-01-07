@@ -9,42 +9,44 @@ import MachineGrid from "./subcomponents/MachineGrid";
 import { Machine } from "../../types/machine";
 import axios from "axios";
 
-const machinesFromDatabase: Machine[] = [
-  {
-    machineID: "M001",
-    machineName: "Machine A",
-    vibration: 5.5,
-    temperature: 75.3,
-    pressure: 3.1,
-    status: "Running",
-    lastMaintenanceDate: "2023-12-10",
-    nextMaintenanceDate: "2024-01-15",
-    upTime: 120,
-    downTime: 5,
-  },
-  {
-    machineID: "M002",
-    machineName: "Machine B",
-    vibration: 3.2,
-    temperature: 68.7,
-    pressure: 2.9,
-    status: "Stopped",
-    lastMaintenanceDate: "2023-12-05",
-    nextMaintenanceDate: "2024-01-10",
-    upTime: 200,
-    downTime: 15,
-  },
-];
+// const machinesFromDatabase: Machine[] = [
+//   {
+//     machineID: "M001",
+//     machineName: "Machine A",
+//     vibration: 5.5,
+//     temperature: 75.3,
+//     pressure: 3.1,
+//     status: "Running",
+//     lastMaintenanceDate: "2023-12-10",
+//     nextMaintenanceDate: "2024-01-15",
+//     upTime: 120,
+//     downTime: 5,
+//   },
+//   {
+//     machineID: "M002",
+//     machineName: "Machine B",
+//     vibration: 3.2,
+//     temperature: 68.7,
+//     pressure: 2.9,
+//     status: "Stopped",
+//     lastMaintenanceDate: "2023-12-05",
+//     nextMaintenanceDate: "2024-01-10",
+//     upTime: 200,
+//     downTime: 15,
+//   },
+// ];
 
 export default function DashboardHome() {
   const [factoryMachines, setFactoryMachines] = useState<Machine[]>([]);
   const [bankMachines, setBankMachines] = useState<Machine[]>([]);
-  // useEffect(() => {
-  //   // Fetch all machines from the database - Shirel...
-  //   axios.get("http://localhost:3000/getAllMachines").then((response) =>
-  //     setBankMachines(response.data)
-  //   )
-  // }, []);
+  useEffect(() => {
+    // Fetch all machines from the database - Shirel...
+    axios.get("http://localhost:8000/critical-machines").then((response) =>
+      {setBankMachines(response.data)
+      console.log(response.data)
+      }
+    )
+  }, []);
 
   // Add machine to the grid, preventing duplicates
   const handleAddMachineToCompany = (machine: Machine) => {
