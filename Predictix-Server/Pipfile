@@ -8,6 +8,8 @@ django = "*"
 scikit-learn = "*"
 pandas = "*"
 django-cors-headers = "*"
+imbalanced-learn = "*"
+lightgbm = "*"
 
 [dev-packages]
 

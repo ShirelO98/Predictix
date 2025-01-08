@@ -6,9 +6,22 @@ import joblib
 from django.db.models import Sum
 from datetime import datetime, timedelta
 
-def get_machines(request):
-    machines = Machine.objects.all().values()
-    return JsonResponse(list(machines), safe=False)
+def get_tagged_machines_by_factory(request, factory_id):
+    """
+    Retrieve tagged machines for a specific factory.
+    """
+    try:
+        # Filter machines by factory ID
+        machines = Machine.objects.filter(factory_id=factory_id).values(
+            "machine_id", "machine_name", "vibration", "temperature", "pressure",
+            "status", "last_maintenance_date", "next_maintenance_date", "up_time", "down_time"
+        )
+
+        # Convert the QuerySet to a list and return as JSON
+        return JsonResponse(list(machines), safe=False)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 def overview(request):
     today = datetime.now().date()
@@ -62,21 +75,6 @@ def alerts(request):
 
     # Return the data as JSON
     return JsonResponse(alerts, safe=False)
-
-def scheduled_maintenance(request):
-    # Calculate the date range for the next 7 days
-    today = datetime.now().date()
-    next_week = today + timedelta(days=7)
-
-    # Filter machines with scheduled maintenance in the next 7 days
-    machines = Machine.objects.filter(
-        next_maintenance_date__range=(today, next_week)
-    ).values(
-        "machine_id", "machine_name", "status", "next_maintenance_date"
-    )
-
-    return JsonResponse(list(machines), safe=False)
-
 
 def scheduled_maintenance(request):
     # Calculate the date range for the next 7 days

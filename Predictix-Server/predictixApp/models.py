@@ -11,6 +11,7 @@ class Machine(models.Model):
     next_maintenance_date = models.DateField()
     up_time = models.IntegerField()
     down_time = models.IntegerField()
+    factory_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.machine_name

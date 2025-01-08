@@ -13,15 +13,18 @@ def load_data(source="db", file_path="data/machine_data.csv"):
         df = pd.DataFrame(list(queryset))
     else:
         raise ValueError("Invalid source. Use 'csv' or 'db'.")
-    
     return df
 
 def preprocess_data(df):
     # Handle missing values
     df = df.dropna()
 
-    # Encode categorical data
+    # Ensure all statuses are mapped to numbers
     df["status"] = df["status"].map({"Operational": 0, "Needs Maintenance": 1, "Failed": 2})
+
+    # Check if there are any unmapped statuses
+    if df["status"].isnull().any():
+        raise ValueError("Found unmapped statuses in the 'status' column.")
 
     # Features and labels
     X = df[["vibration", "temperature", "pressure", "up_time", "down_time"]]

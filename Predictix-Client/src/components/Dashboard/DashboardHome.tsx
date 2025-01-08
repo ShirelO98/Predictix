@@ -41,7 +41,7 @@ export default function DashboardHome() {
   const [bankMachines, setBankMachines] = useState<Machine[]>([]);
   useEffect(() => {
     // Fetch all machines from the database - Shirel...
-    axios.get("http://localhost:8000/critical-machines").then((response) =>
+    axios.get("http://127.0.0.1:8000//getTaggedByFactory/1").then((response) =>
       {setBankMachines(response.data)
       console.log(response.data)
       }
