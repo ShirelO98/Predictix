@@ -7,7 +7,9 @@ import RecentAlerts from "./subcomponents/RecentAlerts";
 import MachineBank from "./subcomponents/MachineBank";
 import MachineGrid from "./subcomponents/MachineGrid";
 import { Machine } from "../../types/machine";
+import { Overview } from "../../types/overview";
 import axios from "axios";
+import { SERVER_ADDRESS } from "../../../constants";
 
 // const machinesFromDatabase: Machine[] = [
 //   {
@@ -39,25 +41,27 @@ import axios from "axios";
 export default function DashboardHome() {
   const [factoryMachines, setFactoryMachines] = useState<Machine[]>([]);
   const [bankMachines, setBankMachines] = useState<Machine[]>([]);
+  const [overview, setOverview] = useState<Overview>({ down_time_hours_next_7_days: 0, needs_maintenance_machines: 0, total_machines: 0 });
   useEffect(() => {
     // Fetch all machines from the database - Shirel...
-    axios.get("http://127.0.0.1:8000//getTaggedByFactory/1").then((response) =>
-      {setBankMachines(response.data)
-      console.log(response.data)
-      }
-    )
+    axios.get(`${SERVER_ADDRESS}/getTaggedByFactory/1`).then((response) => {
+      setBankMachines(response.data);
+    });
+    axios.get(`${SERVER_ADDRESS}/overview`).then((response) => {  // Fetch all machines from the database - Shirel...
+      setOverview(response.data);
+    });
   }, []);
 
   // Add machine to the grid, preventing duplicates
   const handleAddMachineToCompany = (machine: Machine) => {
     setFactoryMachines((prev) => [...prev, machine]);
-    setBankMachines((prev) => prev.filter((m) => m.machineID !== machine.machineID));
+    setBankMachines((prev) => prev.filter((m) => m.machine_id !== machine.machine_id));
   };
 
   // Remove machine from the grid
   const handleRemoveMachineFromCompany = (machine: Machine) => {
     setBankMachines((prev) => [...prev, machine]);
-    setFactoryMachines((prev) => prev.filter((m) => m.machineID !== machine.machineID));
+    setFactoryMachines((prev) => prev.filter((m) => m.machine_id !== machine.machine_id));
   };
 
   return (
@@ -67,7 +71,7 @@ export default function DashboardHome() {
       </Typography>
 
       <Box sx={{ mb: 4 }}>
-        <KeyMetrics />
+        <KeyMetrics overview={overview} />
       </Box>
 
       <Box sx={{ display: "flex", gap: 4 }}>

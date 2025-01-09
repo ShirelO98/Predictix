@@ -35,7 +35,7 @@ const MachineGrid: React.FC<MachineGridProps> = ({ machines, onMachineDrop, onMa
       </Typography>
       <Grid2 container spacing={2}>
         {machines.map((machine) => (
-          <Grid2 key={machine.machineID} >
+          <Grid2 key={machine.machine_id} >
             <MachineCard
               machine={machine}
               onRemove={() => onMachineRemove(machine)}

@@ -44,7 +44,7 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine, onRemove }) => {
 
       <CardContent>
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          {machine.machineName}
+          {machine.machine_name}
         </Typography>
         <Chip label={machine.status} color={machine.status === "Running" ? "success" : "default"} size="small" />
         <Divider sx={{ my: 2 }} />
