@@ -47,7 +47,7 @@ export default function DashboardHome() {
     axios.get(`${SERVER_ADDRESS}/getTaggedByFactory/1`).then((response) => {
       setBankMachines(response.data);
     });
-    axios.get(`${SERVER_ADDRESS}/overview`).then((response) => {  // Fetch all machines from the database - Shirel...
+    axios.get(`${SERVER_ADDRESS}/overview/1`).then((response) => {  // Fetch all machines from the database - Shirel...
       setOverview(response.data);
     });
   }, []);
