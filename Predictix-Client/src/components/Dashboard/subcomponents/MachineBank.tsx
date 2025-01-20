@@ -30,7 +30,7 @@ const MachineBank: React.FC<MachineBankProps> = ({ onMachineSelect, machines }) 
         }}
       >
         {machines.map((machine) => (
-          <DraggableMachine key={machine.machineID} machine={machine} />
+          <DraggableMachine key={machine.machine_id} machine={machine} />
         ))}
       </Box>
     </Box>
@@ -60,7 +60,7 @@ const DraggableMachine: React.FC<{ machine: Machine }> = ({ machine }) => {
     >
       <CardContent>
         <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-          {machine.machineName}
+          {machine.machine_name}
         </Typography>
         <Typography variant="body2" color="textSecondary">
           Status: {machine.status}

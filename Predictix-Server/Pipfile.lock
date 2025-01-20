@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "23c917f6b665ca1fcb15d680753659307940486698e2a3b1a76df470c79d571a"
+            "sha256": "ab62064607200c810ab22ce6c734149c755307d8c2d57a3a91d42bf02b7ba692"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -33,6 +33,24 @@
             "markers": "python_version >= '3.10'",
             "version": "==5.1.4"
         },
+        "django-cors-headers": {
+            "hashes": [
+                "sha256:14d76b4b4c8d39375baeddd89e4f08899051eeaf177cb02a29bd6eae8cf63aa8",
+                "sha256:8edbc0497e611c24d5150e0055d3b178c6534b8ed826fb6f53b21c63f5d48ba3"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==4.6.0"
+        },
+        "imbalanced-learn": {
+            "hashes": [
+                "sha256:7eb5859f7827cb3babfa5789978c22fe36e56527d9c9768df2d864d98d9b40fe",
+                "sha256:d4a8d6372086982350d6de1c7e5b1ed5ece9e41bf93043b4d0e9ea1c422a6606"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.10'",
+            "version": "==0.13.0"
+        },
         "joblib": {
             "hashes": [
                 "sha256:06d478d5674cbc267e7496a410ee875abd68e4340feff4490bcb7afb88060ae6",
@@ -40,6 +58,19 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==1.4.2"
+        },
+        "lightgbm": {
+            "hashes": [
+                "sha256:1301aa853e1fe4bf318539aa132f373862b04aa537af502508711ce03dffff09",
+                "sha256:2212e2166af6379bc005e6f7041dd2dcba3750238eccbc55d09d3c0717c51187",
+                "sha256:7ccb73ee9fb74fbbf89ad24c57a6edad505aa8f2165d02b999a082dbbbb0ee57",
+                "sha256:7f0a3dded769d83560845f2c3fe1966630ec1ca527c380d9d48d9b35579a796e",
+                "sha256:960a0e7c077de0ca3053f1325d3edfc92ea815acf5176adcacdea0f635aeef9b",
+                "sha256:e1cd7baf0318d4e308a26575a63a4635f08df866ad3622a9d8e3d71d9637a1ba"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==4.5.0"
         },
         "numpy": {
             "hashes": [
@@ -256,6 +287,14 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
             "version": "==1.17.0"
+        },
+        "sklearn-compat": {
+            "hashes": [
+                "sha256:74f8267613249d599aa3a2f2503af32fa51bce0800b1b0b0a57b52354402454e",
+                "sha256:a8aaf8ef711988cbd63f187c5560b5f16b25df663aaa1d2d0e1291341d339f80"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==0.1.3"
         },
         "sqlparse": {
             "hashes": [

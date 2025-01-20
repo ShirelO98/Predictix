@@ -5,24 +5,50 @@ from .models import Machine
 import joblib
 from django.db.models import Sum
 from datetime import datetime, timedelta
+from .models import Factory
 
-def get_machines(request):
-    machines = Machine.objects.all().values()
-    return JsonResponse(list(machines), safe=False)
+def get_tagged_machines_by_factory(request, factory_id):
+    """
+    Retrieve tagged machines for a specific factory.
+    """
+    try:
+        # Filter machines by factory ID
+        machines = Machine.objects.filter(factory_id=factory_id).values(
+            "machine_id", "machine_name", "vibration", "temperature", "pressure",
+            "status", "last_maintenance_date", "next_maintenance_date", "up_time", "down_time"
+        )
 
-def overview(request):
+        # Convert the QuerySet to a list and return as JSON
+        return JsonResponse(list(machines), safe=False)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+def overview(request, factory_id):
     today = datetime.now().date()
     next_week = today + timedelta(days=7)
-    total_machines = Machine.objects.count()
-    needs_maintenance_machines = Machine.objects.filter(status="Needs Maintenance").count()
-    total_down_time = Machine.objects.filter(next_maintenance_date__range=(today, next_week)).aggregate(
+
+    # Get the factory instance
+    try:
+        factory = Factory.objects.get(factory_id=factory_id)
+    except Factory.DoesNotExist:
+        return JsonResponse({"error": "Factory not found"}, status=404)
+
+    # Get the machines related to this factory
+    machines = factory.machines.all()
+
+    # Calculate metrics
+    total_machines = machines.count()
+    needs_maintenance_machines = machines.filter(status="Needs Maintenance").count()
+    total_down_time = machines.filter(next_maintenance_date__range=(today, next_week)).aggregate(
         total_down_time=Sum("down_time")
     )["total_down_time"]
 
     response = {
+        "factory_name": factory.factory_name,
         "total_machines": total_machines,
         "needs_maintenance_machines": needs_maintenance_machines,
-        "down_time_hours_next_7_days": total_down_time or 0,  # אם אין נתונים, נחזיר 0
+        "down_time_hours_next_7_days": total_down_time or 0,  # Return 0 if no data
     }
 
     return JsonResponse(response)
@@ -62,21 +88,6 @@ def alerts(request):
 
     # Return the data as JSON
     return JsonResponse(alerts, safe=False)
-
-def scheduled_maintenance(request):
-    # Calculate the date range for the next 7 days
-    today = datetime.now().date()
-    next_week = today + timedelta(days=7)
-
-    # Filter machines with scheduled maintenance in the next 7 days
-    machines = Machine.objects.filter(
-        next_maintenance_date__range=(today, next_week)
-    ).values(
-        "machine_id", "machine_name", "status", "next_maintenance_date"
-    )
-
-    return JsonResponse(list(machines), safe=False)
-
 
 def scheduled_maintenance(request):
     # Calculate the date range for the next 7 days

@@ -11,9 +11,20 @@ class Machine(models.Model):
     next_maintenance_date = models.DateField()
     up_time = models.IntegerField()
     down_time = models.IntegerField()
+    factory_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.machine_name
+    
 class ModelTrainingMetadata(models.Model):
     last_training_count = models.IntegerField(default=0)  
     last_trained_at = models.DateTimeField(auto_now=True)
+
+class Factory(models.Model):
+    admin_id = models.CharField(max_length=10)
+    factory_id = models.CharField(max_length=10)
+    factory_name = models.CharField(max_length=100)
+    machines = models.ManyToManyField(Machine)
+
+    def __str__(self):
+        return self.factory_name
