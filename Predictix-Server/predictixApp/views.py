@@ -4,139 +4,56 @@ from django.http import JsonResponse
 import joblib
 from django.db.models import Sum
 from datetime import datetime, timedelta
-# from .models import Factory
+from predictixApp.models import Machine, Factory
+from django.shortcuts import get_object_or_404
 
-# def get_tagged_machines_by_factory(request, factory_id):
-#     """
-#     Retrieve tagged machines for a specific factory.
-#     """
-#     try:
-#         # Filter machines by factory ID
-#         machines = Machine.objects.filter(factory_id=factory_id).values(
-#             "machine_id", "machine_name", "vibration", "temperature", "pressure",
-#             "status", "last_maintenance_date", "next_maintenance_date", "up_time", "down_time"
-#         )
+def get_tagged_machines_by_factory(request, factory_id):
+    try:
+        # שליפת המפעל לפי factory_id
+        factory = Factory.objects.get(id=factory_id)
+        
+        # שליפת המכונות המשויכות למפעל זה
+        machines = factory.machines.all()  # קשר ManyToMany
+        
+        # הכנת הנתונים לתגובה
+        machines_data = [
+            {
+                "machine_id": machine.machine_id,
+                "name": machine.name,
+                "type": machine.type,
+                "manufacturer": machine.manufacturer,
+                "prediction_status": machine.prediction_status,
+            }
+            for machine in machines
+        ]
 
-#         # Convert the QuerySet to a list and return as JSON
-#         return JsonResponse(list(machines), safe=False)
+        return JsonResponse({"factory_id": factory_id, "machines": machines_data}, safe=False)
 
-#     except Exception as e:
-#         return JsonResponse({"error": str(e)}, status=500)
+    except Factory.DoesNotExist:
+        return JsonResponse({"error": "Factory not found"}, status=404)
+    
 
-# def overview(request, factory_id):
-#     today = datetime.now().date()
-#     next_week = today + timedelta(days=7)
+def alerts(request, factory_id):
+    # שליפת המפעל לפי factory_id
+    factory = get_object_or_404(Factory, id=factory_id)
 
-#     # Get the factory instance
-#     try:
-#         factory = Factory.objects.get(factory_id=factory_id)
-#     except Factory.DoesNotExist:
-#         return JsonResponse({"error": "Factory not found"}, status=404)
+    # שליפת כל המכונות שקשורות למפעל זה
+    machines = factory.machines.all()
 
-#     # Get the machines related to this factory
-#     machines = factory.machines.all()
+    # יצירת רשימה של מכונות עם המידע הנדרש
+    machines_data = [
+        {
+            "name": machine.name,
+            "sensors": {
+                "temperature": machine.temperature,
+                "pressure": machine.pressure,
+                "vibration": machine.vibration,
+                "humidity": machine.humidity,
+                "noise_level": machine.noise_level,
+            }
+        }
+        for machine in machines
+    ]
 
-#     # Calculate metrics
-#     total_machines = machines.count()
-#     needs_maintenance_machines = machines.filter(status="Needs Maintenance").count()
-#     total_down_time = machines.filter(next_maintenance_date__range=(today, next_week)).aggregate(
-#         total_down_time=Sum("down_time")
-#     )["total_down_time"]
-
-#     response = {
-#         "factory_name": factory.factory_name,
-#         "total_machines": total_machines,
-#         "needs_maintenance_machines": needs_maintenance_machines,
-#         "down_time_hours_next_7_days": total_down_time or 0,  # Return 0 if no data
-#     }
-
-#     return JsonResponse(response)
-
-
-# def alerts(request):
-#     # Query machines with "Failed" status and convert to dictionaries
-#     failed_machines = list(
-#         Machine.objects.filter(status="Failed").values(
-#             "machine_id", "machine_name", "status", "vibration", "temperature", "pressure"
-#         )
-#     )
-
-#     # Query machines with critical metrics (e.g., vibration > 2.0, temperature > 100, pressure > 150)
-#     critical_machines = list(
-#         Machine.objects.filter(
-#             vibration__gt=2.0
-#         ).values(
-#             "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
-#         )
-#     ) + list(
-#         Machine.objects.filter(
-#             temperature__gt=100
-#         ).values(
-#             "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
-#         )
-#     ) + list(
-#         Machine.objects.filter(
-#             pressure__gt=150
-#         ).values(
-#             "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
-#         )
-#     )
-
-#     # Combine the two lists
-#     alerts = failed_machines + critical_machines
-
-#     # Return the data as JSON
-#     return JsonResponse(alerts, safe=False)
-
-# def scheduled_maintenance(request):
-#     # Calculate the date range for the next 7 days
-#     today = datetime.now().date()
-#     next_week = today + timedelta(days=7)
-
-#     # Filter machines with scheduled maintenance in the next 7 days
-#     machines = Machine.objects.filter(
-#         next_maintenance_date__range=(today, next_week)
-#     ).values(
-#         "machine_id", "machine_name", "status", "next_maintenance_date"
-#     )
-
-#     return JsonResponse(list(machines), safe=False)
-
-
-# def critical_machines(request):
-#     # Filter machines in "Needs Maintenance" status and order by highest down_time
-#     machines = Machine.objects.filter(status="Needs Maintenance").order_by(
-#         "-down_time"
-#     )[:10]  # Get the top 10 machines with the highest down_time
-
-#     # Select specific fields to include in the response
-#     machines_data = machines.values(
-#         "machine_id", "machine_name", "status", "down_time", "vibration", "temperature", "pressure"
-#     )
-
-#     return JsonResponse(list(machines_data), safe=False)
-
-
-# def predict_failure(request):
-#     # Load model and scaler
-#     model = joblib.load("ml/model.pkl")
-#     scaler = joblib.load("ml/scaler.pkl")
-
-#     # Extract features from request
-#     features = [
-#         float(request.GET.get("vibration", 0)),
-#         float(request.GET.get("temperature", 0)),
-#         float(request.GET.get("pressure", 0)),
-#         float(request.GET.get("up_time", 0)),
-#         float(request.GET.get("down_time", 0)),
-#     ]
-
-#     # Preprocess and predict
-#     scaled_features = scaler.transform([features])
-#     prediction = model.predict(scaled_features)
-
-#     # Map prediction back to status
-#     status_map = {0: "Operational", 1: "Needs Maintenance", 2: "Failed"}
-#     predicted_status = status_map[int(prediction[0])]
-
-#     return JsonResponse({"predicted_status": predicted_status})
+    # החזרת נתונים בפורמט JSON
+    return JsonResponse({"factory_id": factory_id, "machines": machines_data}, safe=False)

@@ -35,8 +35,8 @@ class Factory(models.Model):
 
 
 class Machine(models.Model):
-    machine_id = models.CharField(max_length=20, unique=True)
-    factories = models.ManyToManyField(Factory, related_name="machines")  # קשר ManyToMany
+    machine_id = models.IntegerField(unique=True)
+    factories = models.ManyToManyField(Factory, related_name="machines")
     name = models.CharField(max_length=100)
     type = models.CharField(max_length=50)
     manufacturer = models.CharField(max_length=100)
@@ -55,5 +55,9 @@ class Machine(models.Model):
     humidity = models.FloatField(null=True, blank=True)
     noise_level = models.FloatField(null=True, blank=True)
 
+    # הוספת שדה סטטוס עם ערך ברירת מחדל 0
+    prediction_status = models.IntegerField(default=0)
+
     def __str__(self):
         return f"{self.name} ({self.machine_id})"
+
