@@ -71,7 +71,6 @@ export default function DashboardLayoutSidebarCollapsed() {
     >
       <DashboardLayout defaultSidebarCollapsed>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: 2, py: 1 }}>
-          <Typography variant="h6">Welcome to Predictix Dashboard</Typography>
           <LogoutButton />
         </Box>
         <Box sx={{ py: 4 }}>
