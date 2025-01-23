@@ -11,32 +11,7 @@ import { Overview } from "../../types/overview";
 import axios from "axios";
 import { SERVER_ADDRESS } from "../../../constants";
 
-// const machinesFromDatabase: Machine[] = [
-//   {
-//     machineID: "M001",
-//     machineName: "Machine A",
-//     vibration: 5.5,
-//     temperature: 75.3,
-//     pressure: 3.1,
-//     status: "Running",
-//     lastMaintenanceDate: "2023-12-10",
-//     nextMaintenanceDate: "2024-01-15",
-//     upTime: 120,
-//     downTime: 5,
-//   },
-//   {
-//     machineID: "M002",
-//     machineName: "Machine B",
-//     vibration: 3.2,
-//     temperature: 68.7,
-//     pressure: 2.9,
-//     status: "Stopped",
-//     lastMaintenanceDate: "2023-12-05",
-//     nextMaintenanceDate: "2024-01-10",
-//     upTime: 200,
-//     downTime: 15,
-//   },
-// ];
+
 
 export default function DashboardHome() {
   const [factoryMachines, setFactoryMachines] = useState<Machine[]>([]);
@@ -84,16 +59,9 @@ export default function DashboardHome() {
         <MachineBank onMachineSelect={handleAddMachineToCompany} machines={bankMachines} />
       </Box>
 
-      <Box sx={{ mt: 4 }}>
-        <MachineStatusGraph />
-      </Box>
+      
 
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Recent Alerts
-        </Typography>
-        <RecentAlerts />
-      </Box>
+      
     </Box>
   );
 }

@@ -23,3 +23,11 @@ export interface Machine {
   next_maintenance_date: Date;
   up_time: number;
 }
+
+export interface MachineSensors {
+  machine_id: string;
+  machine_name: string;
+  vibration: number;
+  temperature: number;
+  pressure: number;
+}
