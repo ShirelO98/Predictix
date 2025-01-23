@@ -1,17 +1,24 @@
 from django.contrib import admin
-from .models import Machine
-from .models import ModelTrainingMetadata
-from .models import Factory
+from .models import MachineHistory
+from .models import Factory, Machine
 
-@admin.register(Machine)
-class MachineAdmin(admin.ModelAdmin):
-    list_display = ("machine_id", "machine_name", "status", "up_time", "down_time")
-
-@admin.register(ModelTrainingMetadata)
-class ModelTrainingMetadataAdmin(admin.ModelAdmin):
-    list_display = ("last_training_count", "last_trained_at")
+@admin.register(MachineHistory)
+class MachineHistoryAdmin(admin.ModelAdmin):
+    list_display = ('date', 'machine', 'machine_type', 'manufacturer', 'age', 'last_maintenance_days', 'total_maintenance_cost', 'fault')
+    list_filter = ('machine_type', 'manufacturer', 'fault', 'date')
+    search_fields = ('machine', 'manufacturer', 'machine_type')
+    ordering = ('-date',)
 
 @admin.register(Factory)
 class FactoryAdmin(admin.ModelAdmin):
-    list_display = ("factory_id", "factory_name", "admin_id")
-    filter_horizontal = ("machines",) 
+    list_display = ('factory_id', 'name', 'location', 'established_date', 'admin_id')
+    search_fields = ('factory_id', 'name', 'location')
+    ordering = ('-established_date',)
+
+
+@admin.register(Machine)
+class MachineAdmin(admin.ModelAdmin):
+    list_display = ('machine_id', 'name', 'type', 'manufacturer', 'status', 'installation_date')
+    list_filter = ('type', 'manufacturer', 'status', 'factories')
+    search_fields = ('machine_id', 'name', 'manufacturer')
+    ordering = ('-installation_date',)

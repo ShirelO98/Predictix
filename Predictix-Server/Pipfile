@@ -10,6 +10,9 @@ pandas = "*"
 django-cors-headers = "*"
 imbalanced-learn = "*"
 lightgbm = "*"
+matplotlib = "*"
+seaborn = "*"
+tk = "*"
 
 [dev-packages]
 

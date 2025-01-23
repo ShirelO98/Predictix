@@ -1,143 +1,142 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import Machine
 import joblib
 from django.db.models import Sum
 from datetime import datetime, timedelta
-from .models import Factory
+# from .models import Factory
 
-def get_tagged_machines_by_factory(request, factory_id):
-    """
-    Retrieve tagged machines for a specific factory.
-    """
-    try:
-        # Filter machines by factory ID
-        machines = Machine.objects.filter(factory_id=factory_id).values(
-            "machine_id", "machine_name", "vibration", "temperature", "pressure",
-            "status", "last_maintenance_date", "next_maintenance_date", "up_time", "down_time"
-        )
+# def get_tagged_machines_by_factory(request, factory_id):
+#     """
+#     Retrieve tagged machines for a specific factory.
+#     """
+#     try:
+#         # Filter machines by factory ID
+#         machines = Machine.objects.filter(factory_id=factory_id).values(
+#             "machine_id", "machine_name", "vibration", "temperature", "pressure",
+#             "status", "last_maintenance_date", "next_maintenance_date", "up_time", "down_time"
+#         )
 
-        # Convert the QuerySet to a list and return as JSON
-        return JsonResponse(list(machines), safe=False)
+#         # Convert the QuerySet to a list and return as JSON
+#         return JsonResponse(list(machines), safe=False)
 
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+#     except Exception as e:
+#         return JsonResponse({"error": str(e)}, status=500)
 
-def overview(request, factory_id):
-    today = datetime.now().date()
-    next_week = today + timedelta(days=7)
+# def overview(request, factory_id):
+#     today = datetime.now().date()
+#     next_week = today + timedelta(days=7)
 
-    # Get the factory instance
-    try:
-        factory = Factory.objects.get(factory_id=factory_id)
-    except Factory.DoesNotExist:
-        return JsonResponse({"error": "Factory not found"}, status=404)
+#     # Get the factory instance
+#     try:
+#         factory = Factory.objects.get(factory_id=factory_id)
+#     except Factory.DoesNotExist:
+#         return JsonResponse({"error": "Factory not found"}, status=404)
 
-    # Get the machines related to this factory
-    machines = factory.machines.all()
+#     # Get the machines related to this factory
+#     machines = factory.machines.all()
 
-    # Calculate metrics
-    total_machines = machines.count()
-    needs_maintenance_machines = machines.filter(status="Needs Maintenance").count()
-    total_down_time = machines.filter(next_maintenance_date__range=(today, next_week)).aggregate(
-        total_down_time=Sum("down_time")
-    )["total_down_time"]
+#     # Calculate metrics
+#     total_machines = machines.count()
+#     needs_maintenance_machines = machines.filter(status="Needs Maintenance").count()
+#     total_down_time = machines.filter(next_maintenance_date__range=(today, next_week)).aggregate(
+#         total_down_time=Sum("down_time")
+#     )["total_down_time"]
 
-    response = {
-        "factory_name": factory.factory_name,
-        "total_machines": total_machines,
-        "needs_maintenance_machines": needs_maintenance_machines,
-        "down_time_hours_next_7_days": total_down_time or 0,  # Return 0 if no data
-    }
+#     response = {
+#         "factory_name": factory.factory_name,
+#         "total_machines": total_machines,
+#         "needs_maintenance_machines": needs_maintenance_machines,
+#         "down_time_hours_next_7_days": total_down_time or 0,  # Return 0 if no data
+#     }
 
-    return JsonResponse(response)
-
-
-def alerts(request):
-    # Query machines with "Failed" status and convert to dictionaries
-    failed_machines = list(
-        Machine.objects.filter(status="Failed").values(
-            "machine_id", "machine_name", "status", "vibration", "temperature", "pressure"
-        )
-    )
-
-    # Query machines with critical metrics (e.g., vibration > 2.0, temperature > 100, pressure > 150)
-    critical_machines = list(
-        Machine.objects.filter(
-            vibration__gt=2.0
-        ).values(
-            "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
-        )
-    ) + list(
-        Machine.objects.filter(
-            temperature__gt=100
-        ).values(
-            "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
-        )
-    ) + list(
-        Machine.objects.filter(
-            pressure__gt=150
-        ).values(
-            "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
-        )
-    )
-
-    # Combine the two lists
-    alerts = failed_machines + critical_machines
-
-    # Return the data as JSON
-    return JsonResponse(alerts, safe=False)
-
-def scheduled_maintenance(request):
-    # Calculate the date range for the next 7 days
-    today = datetime.now().date()
-    next_week = today + timedelta(days=7)
-
-    # Filter machines with scheduled maintenance in the next 7 days
-    machines = Machine.objects.filter(
-        next_maintenance_date__range=(today, next_week)
-    ).values(
-        "machine_id", "machine_name", "status", "next_maintenance_date"
-    )
-
-    return JsonResponse(list(machines), safe=False)
+#     return JsonResponse(response)
 
 
-def critical_machines(request):
-    # Filter machines in "Needs Maintenance" status and order by highest down_time
-    machines = Machine.objects.filter(status="Needs Maintenance").order_by(
-        "-down_time"
-    )[:10]  # Get the top 10 machines with the highest down_time
+# def alerts(request):
+#     # Query machines with "Failed" status and convert to dictionaries
+#     failed_machines = list(
+#         Machine.objects.filter(status="Failed").values(
+#             "machine_id", "machine_name", "status", "vibration", "temperature", "pressure"
+#         )
+#     )
 
-    # Select specific fields to include in the response
-    machines_data = machines.values(
-        "machine_id", "machine_name", "status", "down_time", "vibration", "temperature", "pressure"
-    )
+#     # Query machines with critical metrics (e.g., vibration > 2.0, temperature > 100, pressure > 150)
+#     critical_machines = list(
+#         Machine.objects.filter(
+#             vibration__gt=2.0
+#         ).values(
+#             "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
+#         )
+#     ) + list(
+#         Machine.objects.filter(
+#             temperature__gt=100
+#         ).values(
+#             "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
+#         )
+#     ) + list(
+#         Machine.objects.filter(
+#             pressure__gt=150
+#         ).values(
+#             "machine_id", "machine_name", "vibration", "temperature", "pressure", "status"
+#         )
+#     )
 
-    return JsonResponse(list(machines_data), safe=False)
+#     # Combine the two lists
+#     alerts = failed_machines + critical_machines
+
+#     # Return the data as JSON
+#     return JsonResponse(alerts, safe=False)
+
+# def scheduled_maintenance(request):
+#     # Calculate the date range for the next 7 days
+#     today = datetime.now().date()
+#     next_week = today + timedelta(days=7)
+
+#     # Filter machines with scheduled maintenance in the next 7 days
+#     machines = Machine.objects.filter(
+#         next_maintenance_date__range=(today, next_week)
+#     ).values(
+#         "machine_id", "machine_name", "status", "next_maintenance_date"
+#     )
+
+#     return JsonResponse(list(machines), safe=False)
 
 
-def predict_failure(request):
-    # Load model and scaler
-    model = joblib.load("ml/model.pkl")
-    scaler = joblib.load("ml/scaler.pkl")
+# def critical_machines(request):
+#     # Filter machines in "Needs Maintenance" status and order by highest down_time
+#     machines = Machine.objects.filter(status="Needs Maintenance").order_by(
+#         "-down_time"
+#     )[:10]  # Get the top 10 machines with the highest down_time
 
-    # Extract features from request
-    features = [
-        float(request.GET.get("vibration", 0)),
-        float(request.GET.get("temperature", 0)),
-        float(request.GET.get("pressure", 0)),
-        float(request.GET.get("up_time", 0)),
-        float(request.GET.get("down_time", 0)),
-    ]
+#     # Select specific fields to include in the response
+#     machines_data = machines.values(
+#         "machine_id", "machine_name", "status", "down_time", "vibration", "temperature", "pressure"
+#     )
 
-    # Preprocess and predict
-    scaled_features = scaler.transform([features])
-    prediction = model.predict(scaled_features)
+#     return JsonResponse(list(machines_data), safe=False)
 
-    # Map prediction back to status
-    status_map = {0: "Operational", 1: "Needs Maintenance", 2: "Failed"}
-    predicted_status = status_map[int(prediction[0])]
 
-    return JsonResponse({"predicted_status": predicted_status})
+# def predict_failure(request):
+#     # Load model and scaler
+#     model = joblib.load("ml/model.pkl")
+#     scaler = joblib.load("ml/scaler.pkl")
+
+#     # Extract features from request
+#     features = [
+#         float(request.GET.get("vibration", 0)),
+#         float(request.GET.get("temperature", 0)),
+#         float(request.GET.get("pressure", 0)),
+#         float(request.GET.get("up_time", 0)),
+#         float(request.GET.get("down_time", 0)),
+#     ]
+
+#     # Preprocess and predict
+#     scaled_features = scaler.transform([features])
+#     prediction = model.predict(scaled_features)
+
+#     # Map prediction back to status
+#     status_map = {0: "Operational", 1: "Needs Maintenance", 2: "Failed"}
+#     predicted_status = status_map[int(prediction[0])]
+
+#     return JsonResponse({"predicted_status": predicted_status})

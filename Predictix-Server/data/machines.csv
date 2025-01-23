@@ -1,0 +1,101 @@
+machine_id,name,type,manufacturer,installation_date,status,location,temperature,pressure,vibration,humidity,noise_level
+MCHN001,Lay,Milling,Siemens,2018-04-15,Operational,Davidshire,49.03,0.88,0.78,77.53,94.8
+MCHN002,Expert,Lathe,Fanuc,2018-03-25,Maintenance,Vangland,75.54,2.43,0.1,56.52,84.7
+MCHN003,Worker,Milling,Fanuc,2018-06-16,Faulty,Port Beverly,41.54,1.64,0.09,58.66,72.77
+MCHN004,Idea,Drill Press,Siemens,2018-10-11,Faulty,East Anthonyborough,14.2,1.88,0.66,80.6,70.0
+MCHN005,Third,Milling,Siemens,2024-03-18,Faulty,Markbury,73.01,0.94,0.38,89.54,53.59
+MCHN006,Nation,Milling,Fanuc,2019-11-02,Operational,Vaughnshire,74.48,0.97,0.73,71.86,62.95
+MCHN007,Family,Milling,Siemens,2018-12-13,Faulty,New Crystalshire,45.4,1.86,0.58,50.71,97.65
+MCHN008,Thus,Drill Press,Siemens,2022-12-31,Faulty,Lake Jamesland,13.02,1.67,0.01,45.76,86.67
+MCHN009,Her,CNC,ABB,2020-11-17,Faulty,New Ginaville,74.84,1.6,0.93,71.87,64.71
+MCHN010,Somebody,CNC,Mitsubishi,2022-05-07,Faulty,Port Matthew,64.52,0.55,0.19,35.03,66.53
+MCHN011,Bank,Drill Press,Bosch,2020-12-25,Operational,Lake Michaelbury,25.28,0.66,0.05,53.35,69.49
+MCHN012,Hit,Drill Press,Fanuc,2023-12-09,Operational,New Adrian,45.67,1.49,0.28,88.35,96.51
+MCHN013,Which,Lathe,Fanuc,2021-09-17,Maintenance,South Felicia,21.39,0.62,0.88,37.43,60.68
+MCHN014,Top,Lathe,Siemens,2015-02-08,Faulty,Lindseymouth,54.96,1.64,0.59,69.98,67.08
+MCHN015,Whether,Milling,Siemens,2024-09-08,Faulty,Baileytown,78.51,1.58,0.79,30.76,50.88
+MCHN016,Save,Drill Press,ABB,2023-10-27,Faulty,Ayalaberg,59.56,1.87,0.6,81.18,56.45
+MCHN017,Interview,CNC,Fanuc,2017-04-21,Faulty,Diazchester,37.69,0.63,0.88,65.05,87.23
+MCHN018,Early,CNC,Bosch,2015-09-27,Operational,Lake Stephaniemouth,40.84,1.39,0.52,81.29,71.0
+MCHN019,Describe,Drill Press,Mitsubishi,2024-12-05,Operational,Port Tarahaven,74.24,1.03,0.93,30.36,88.46
+MCHN020,Example,Milling,ABB,2021-07-31,Operational,East Brenda,13.69,1.99,0.37,49.07,64.58
+MCHN021,Guess,Milling,Mitsubishi,2024-04-10,Operational,Heatherhaven,36.3,0.89,0.38,50.82,73.16
+MCHN022,International,Milling,Mitsubishi,2022-12-11,Maintenance,South Elizabethport,30.42,1.7,0.59,48.25,78.66
+MCHN023,Reach,CNC,Siemens,2022-10-21,Maintenance,Jacobsfurt,44.99,1.56,0.33,66.33,88.76
+MCHN024,Item,Drill Press,Fanuc,2018-11-12,Faulty,West Karibury,23.49,1.13,0.34,49.81,63.93
+MCHN025,Term,Milling,Mitsubishi,2022-12-11,Operational,South Jesus,73.33,1.62,0.11,45.72,56.88
+MCHN026,Determine,Drill Press,ABB,2017-02-11,Operational,Heatherfurt,68.95,1.23,0.86,86.87,59.17
+MCHN027,Often,Lathe,Fanuc,2018-12-22,Operational,Williamsbury,58.25,2.15,0.27,30.53,52.53
+MCHN028,Everybody,CNC,ABB,2023-08-11,Maintenance,North Steven,35.07,0.87,0.56,64.44,94.11
+MCHN029,Mother,Drill Press,Mitsubishi,2020-02-20,Faulty,Lucerofurt,30.15,1.43,0.98,54.31,86.68
+MCHN030,Kind,Drill Press,ABB,2023-02-09,Maintenance,Lake Savannahville,58.5,1.16,0.49,32.37,58.65
+MCHN031,Within,Lathe,Mitsubishi,2020-01-28,Operational,South Darrellberg,50.29,1.75,0.93,55.95,54.87
+MCHN032,Learn,CNC,Fanuc,2023-06-22,Operational,Lake David,68.59,1.51,0.53,43.58,69.08
+MCHN033,Specific,Milling,Mitsubishi,2021-09-15,Maintenance,Collinsborough,39.37,1.31,0.9,46.06,59.62
+MCHN034,Meeting,CNC,ABB,2020-12-02,Maintenance,West Sarah,58.92,0.88,0.36,65.85,86.92
+MCHN035,Simple,Milling,Fanuc,2015-05-03,Maintenance,Jeffreystad,36.23,0.94,0.81,43.8,99.3
+MCHN036,Clearly,Milling,Bosch,2023-06-01,Maintenance,North Meganmouth,31.58,0.8,0.01,83.23,60.66
+MCHN037,Story,Lathe,Siemens,2019-07-18,Faulty,North Natalie,62.13,0.64,0.02,70.25,77.51
+MCHN038,Nothing,Lathe,Siemens,2016-08-30,Maintenance,Tylermouth,22.25,1.31,0.81,59.53,62.33
+MCHN039,Piece,CNC,Mitsubishi,2022-03-30,Faulty,Port Melissastad,31.33,1.21,0.6,78.98,66.42
+MCHN040,Tell,Milling,ABB,2017-07-13,Operational,Cooperville,38.81,2.18,0.34,63.41,61.37
+MCHN041,Population,Milling,Siemens,2018-03-07,Maintenance,South Kristaview,58.52,1.58,0.13,71.17,53.0
+MCHN042,Realize,Lathe,Bosch,2017-03-30,Faulty,Georgeberg,10.21,1.26,0.49,36.75,53.02
+MCHN043,Scene,Drill Press,Mitsubishi,2019-03-28,Maintenance,Lake Ryanland,21.3,1.79,0.21,70.83,64.53
+MCHN044,Similar,CNC,Mitsubishi,2022-04-09,Maintenance,South Jillian,26.26,1.25,0.79,89.54,73.84
+MCHN045,Town,CNC,ABB,2015-04-07,Operational,Haleyland,12.94,1.54,0.95,84.41,66.11
+MCHN046,Him,CNC,Siemens,2021-08-29,Faulty,East Annaview,12.3,1.02,0.09,65.05,61.4
+MCHN047,Address,Milling,Bosch,2017-10-29,Operational,Higginsfurt,26.51,2.02,0.59,66.79,80.05
+MCHN048,Industry,Lathe,Siemens,2016-01-02,Faulty,Adamsmouth,71.24,1.61,0.44,85.3,59.59
+MCHN049,Ever,CNC,Fanuc,2022-11-24,Maintenance,Jasonchester,59.68,1.05,0.71,45.49,99.43
+MCHN050,Result,Milling,ABB,2024-08-01,Faulty,Tuckerfurt,42.16,1.31,0.64,78.61,60.88
+MCHN051,Management,Drill Press,Siemens,2023-01-23,Faulty,Richardhaven,42.84,2.08,0.18,65.88,58.78
+MCHN052,Research,Milling,ABB,2015-02-23,Operational,Lake Samuelstad,73.79,0.67,0.29,52.5,71.05
+MCHN053,Agree,Milling,Fanuc,2022-08-04,Maintenance,West Christophermouth,46.64,0.92,0.44,58.36,50.76
+MCHN054,Tax,CNC,Siemens,2018-01-12,Operational,Charlesborough,67.48,1.23,0.76,62.45,66.96
+MCHN055,Off,Lathe,Mitsubishi,2022-09-27,Operational,Morrisberg,47.39,1.8,0.69,62.5,80.39
+MCHN056,New,Drill Press,Bosch,2022-05-14,Operational,South Victoria,24.89,1.07,0.11,60.12,66.21
+MCHN057,Develop,Lathe,Siemens,2019-12-14,Operational,Lake Katherinemouth,74.0,1.43,0.11,54.0,64.62
+MCHN058,Push,CNC,Bosch,2022-06-02,Operational,Lake Melissaberg,51.49,1.38,0.34,61.77,57.47
+MCHN059,Never,Milling,ABB,2017-04-29,Operational,East Andrew,74.89,0.66,0.03,37.82,88.29
+MCHN060,Always,Milling,ABB,2016-02-28,Maintenance,East Teresaview,39.41,1.4,0.48,80.66,66.57
+MCHN061,Free,CNC,ABB,2023-02-16,Faulty,Angelatown,30.93,1.71,0.24,41.27,52.03
+MCHN062,Number,CNC,Bosch,2017-08-06,Operational,Hollowayfort,31.29,1.78,0.31,41.55,58.47
+MCHN063,However,Drill Press,Bosch,2022-07-03,Maintenance,North Angelastad,38.75,1.26,0.41,47.21,58.26
+MCHN064,Enjoy,Drill Press,Fanuc,2023-01-05,Operational,Martinezview,26.62,2.32,0.76,87.3,82.65
+MCHN065,Also,Drill Press,ABB,2023-12-21,Faulty,Angelaborough,34.04,1.46,0.7,79.08,78.56
+MCHN066,Church,CNC,Siemens,2017-09-27,Faulty,Lake Bethhaven,41.27,1.66,0.86,60.49,68.62
+MCHN067,Good,Drill Press,Mitsubishi,2024-02-03,Faulty,Stevenhaven,73.86,1.62,0.7,74.25,69.48
+MCHN068,Surface,Drill Press,Bosch,2018-10-14,Operational,Johnberg,53.32,2.18,0.59,55.15,89.22
+MCHN069,Could,Milling,Bosch,2015-01-27,Maintenance,Port Thomaschester,18.04,0.69,0.4,41.81,92.88
+MCHN070,Want,CNC,Bosch,2019-10-19,Operational,South Ashleyfort,77.36,1.7,0.96,50.98,96.79
+MCHN071,Family,Lathe,ABB,2021-10-30,Operational,West Christopher,60.48,0.72,0.79,87.14,58.4
+MCHN072,However,Lathe,Mitsubishi,2024-09-25,Operational,East Joshua,75.37,0.7,0.05,82.08,70.83
+MCHN073,Anyone,CNC,Bosch,2023-12-17,Maintenance,East Lindsey,72.87,0.67,0.97,34.15,81.46
+MCHN074,Clearly,Milling,Bosch,2017-07-08,Faulty,Branchhaven,79.26,1.94,0.4,65.72,52.27
+MCHN075,Into,Drill Press,Mitsubishi,2017-11-27,Maintenance,New Jenniferburgh,66.06,2.39,0.11,65.65,78.42
+MCHN076,About,Drill Press,Siemens,2016-04-05,Maintenance,Andradehaven,74.38,1.84,0.57,52.14,56.23
+MCHN077,Wife,CNC,Siemens,2015-05-22,Operational,Port Susantown,16.48,0.85,0.7,53.18,62.28
+MCHN078,Seat,Milling,Siemens,2023-09-09,Maintenance,South Alexashire,79.31,2.03,0.49,73.51,82.1
+MCHN079,Be,Lathe,Siemens,2020-05-18,Operational,Kimberlymouth,36.47,2.37,0.42,71.36,82.35
+MCHN080,Feel,Milling,Bosch,2019-12-13,Operational,Bryanborough,31.19,2.16,0.55,55.95,54.0
+MCHN081,Far,Drill Press,Bosch,2022-09-25,Faulty,East Juanfort,35.33,2.2,0.92,31.15,99.6
+MCHN082,Tv,CNC,Siemens,2020-10-30,Operational,Summersfurt,41.16,2.14,0.64,75.03,68.71
+MCHN083,See,CNC,ABB,2021-07-16,Maintenance,South Lisa,24.96,0.75,0.64,89.33,53.49
+MCHN084,Others,Drill Press,Fanuc,2022-02-25,Operational,Williamshaven,14.27,2.1,0.04,43.26,61.97
+MCHN085,Wait,Milling,ABB,2022-10-02,Maintenance,Austinland,39.01,1.17,0.84,85.22,87.5
+MCHN086,Artist,Drill Press,ABB,2016-03-02,Maintenance,Ashleychester,56.34,0.79,0.65,46.54,79.58
+MCHN087,Reality,CNC,Bosch,2021-02-14,Operational,Lisaport,33.94,0.61,0.67,58.05,51.71
+MCHN088,Of,Milling,Bosch,2018-04-12,Maintenance,Salazarshire,69.71,1.93,0.43,79.99,79.32
+MCHN089,Game,Drill Press,Bosch,2018-04-05,Operational,Lake Gary,16.95,0.72,0.71,76.6,52.73
+MCHN090,Middle,CNC,Mitsubishi,2022-07-16,Operational,Woodsville,34.61,1.96,0.76,60.71,93.43
+MCHN091,Sure,Milling,Mitsubishi,2024-10-06,Operational,Christinemouth,79.32,2.08,0.39,37.07,50.85
+MCHN092,What,Milling,Mitsubishi,2015-08-16,Operational,South Stephaniechester,17.31,0.53,0.91,61.03,53.94
+MCHN093,Fine,Drill Press,Bosch,2023-12-25,Maintenance,Lynnborough,78.38,2.16,0.71,43.8,83.6
+MCHN094,Compare,CNC,Siemens,2023-09-23,Faulty,New Christinaview,70.98,0.73,0.57,68.42,97.04
+MCHN095,Newspaper,Lathe,Fanuc,2023-03-27,Faulty,South Cindy,31.23,0.56,0.17,72.13,76.22
+MCHN096,Study,Drill Press,ABB,2024-10-12,Faulty,South Petermouth,73.46,1.4,0.17,54.07,68.21
+MCHN097,Kind,Drill Press,Mitsubishi,2021-12-24,Maintenance,Wilsonchester,21.11,0.76,0.85,56.46,98.11
+MCHN098,Stage,CNC,Siemens,2015-07-06,Maintenance,West Joseph,67.29,1.21,0.42,41.83,58.69
+MCHN099,Project,Milling,ABB,2015-02-07,Faulty,Danashire,70.26,0.78,0.18,60.25,77.55
+MCHN100,Federal,Drill Press,ABB,2020-07-05,Faulty,Velazquezhaven,60.27,1.28,0.52,64.76,78.45
