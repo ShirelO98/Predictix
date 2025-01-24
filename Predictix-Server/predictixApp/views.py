@@ -12,8 +12,15 @@ def get_tagged_machines_by_factory(request, factory_id):
         # שליפת המפעל לפי factory_id
         factory = Factory.objects.get(id=factory_id)
         
-        # שליפת המכונות המשויכות למפעל זה
-        machines = factory.machines.all()  # קשר ManyToMany
+        # טוען את המודל המאומן
+        model_path = 'ml/models/factory_model.pkl'
+        model = joblib.load(model_path)
+        
+        # עדכון הסטטוס של המכונות במפעל
+        update_prediction_status(model, factory_id)
+        
+        # שליפת המכונות המעודכנות
+        machines = factory.machines.all()
         
         # הכנת הנתונים לתגובה
         machines_data = [
