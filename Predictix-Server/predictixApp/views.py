@@ -57,3 +57,20 @@ def alerts(request, factory_id):
 
     # החזרת נתונים בפורמט JSON
     return JsonResponse({"factory_id": factory_id, "machines": machines_data}, safe=False)
+
+def overview(request, factory_id):
+    # שליפת המפעל לפי factory_id
+    factory = get_object_or_404(Factory, id=factory_id)
+
+    # שליפת כל המכונות שקשורות למפעל זה
+    machines = factory.machines.all()
+
+    # חישוב הנתונים הנדרשים
+    total_machines = machines.count()
+    needs_maintenance_machines = machines.filter(status="Maintenance").count()
+
+    # החזרת התוצאה בפורמט JSON
+    return JsonResponse({
+        "needs_maintenance_machines": needs_maintenance_machines,
+        "total_machines": total_machines
+    })
