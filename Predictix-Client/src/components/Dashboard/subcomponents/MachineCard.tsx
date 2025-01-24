@@ -46,18 +46,46 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine, onRemove }) => {
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           {machine.machine_name}
         </Typography>
-        <Chip label={machine.status} color={machine.status === "Running" ? "success" : "default"} size="small" />
+        <Chip
+          label={machine.status}
+          color={machine.status === "Running" ? "success" : "default"}
+          size="small"
+        />
         <Divider sx={{ my: 2 }} />
         <Box>
           <Typography variant="body2">
-            <strong>Vibration:</strong> {machine.vibration.toFixed(2)} m/s²
+            <strong>Type:</strong> {machine.type}
           </Typography>
           <Typography variant="body2">
-            <strong>Temperature:</strong> {machine.temperature.toFixed(1)}°C
+            <strong>Manufacturer:</strong> {machine.manufacturer}
           </Typography>
-          <Typography variant="body2">
-            <strong>Pressure:</strong> {machine.pressure.toFixed(1)} bar
-          </Typography>
+          {machine.vibration !== undefined && (
+            <Typography variant="body2">
+              <strong>Vibration:</strong> {machine.vibration.toFixed(2)} m/s²
+            </Typography>
+          )}
+          {machine.temperature !== undefined && (
+            <Typography variant="body2">
+              <strong>Temperature:</strong> {machine.temperature.toFixed(1)}°C
+            </Typography>
+          )}
+          {machine.pressure !== undefined && (
+            <Typography variant="body2">
+              <strong>Pressure:</strong> {machine.pressure.toFixed(1)} bar
+            </Typography>
+          )}
+          {machine.last_maintenance_date && (
+            <Typography variant="body2">
+              <strong>Last Maintenance:</strong>{" "}
+              {new Date(machine.last_maintenance_date).toLocaleDateString()}
+            </Typography>
+          )}
+          {machine.next_maintenance_date && (
+            <Typography variant="body2">
+              <strong>Next Maintenance:</strong>{" "}
+              {new Date(machine.next_maintenance_date).toLocaleDateString()}
+            </Typography>
+          )}
         </Box>
       </CardContent>
     </Card>

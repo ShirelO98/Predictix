@@ -12,16 +12,18 @@
 // }
 
 export interface Machine {
-  machine_id: string;
+  machine_id: string; 
   machine_name: string;
-  vibration: number;
-  temperature: number;
-  pressure: number;
-  status: string;
-  down_time: number;
-  last_maintenance_date: Date;
-  next_maintenance_date: Date;
-  up_time: number;
+  vibration?: number; 
+  temperature?: number; 
+  pressure?: number;
+  status: string; 
+  type: string; 
+  manufacturer: string; 
+  down_time?: number; 
+  last_maintenance_date?: Date; 
+  next_maintenance_date?: Date; 
+  up_time?: number; 
 }
 
 export interface MachineSensors {
