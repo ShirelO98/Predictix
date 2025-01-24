@@ -1,103 +1,73 @@
 import React from "react";
 import { Card, Typography, Box, Divider } from "@mui/material";
-import { MachineSensors } from "../../../types/machine";
 
 interface SensorCardProps {
-  machine: MachineSensors;
+  machine: {
+    machine_name: string;
+    sensors: Record<string, number>; // Generic structure for sensors
+  };
 }
 
-// Thresholds definition
-const thresholds = {
-  vibration: 4.5,
+// Thresholds for critical states (define as needed)
+const thresholds: Record<string, number> = {
   temperature: 70.0,
   pressure: 3.0,
-};
-
-// Helper function to determine critical states and styles
-const getSensorStyles = (machine: MachineSensors) => {
-  const isVibrationCritical = machine.vibration > thresholds.vibration;
-  const isTemperatureCritical = machine.temperature > thresholds.temperature;
-  const isPressureCritical = machine.pressure > thresholds.pressure;
-
-  const isCritical = isVibrationCritical || isTemperatureCritical || isPressureCritical;
-
-  return {
-    cardStyles: {
-      backgroundColor: isCritical ? "#ffebeb" : "#f9f9f9", // Red tint for critical
-      border: `2px solid ${isCritical ? "#ff0000" : "#ccc"}`, // Red border for critical
-    },
-    textStyles: {
-      vibrationColor: isVibrationCritical ? "red" : "inherit",
-      temperatureColor: isTemperatureCritical ? "red" : "inherit",
-      pressureColor: isPressureCritical ? "red" : "inherit",
-    },
-  };
+  vibration: 4.5,
 };
 
 const SensorCard: React.FC<SensorCardProps> = ({ machine }) => {
-  const { cardStyles, textStyles } = getSensorStyles(machine);
+  const { machine_name, sensors } = machine;
+
+  const formatSensorName = (name: string) => {
+    return name.replace(/_/g, " ").charAt(0).toUpperCase() + name.slice(1);
+  };
+
+  const getSensorStyles = (key: string, value: number) => {
+    const isCritical = thresholds[key] !== undefined && value > thresholds[key];
+    return {
+      color: isCritical ? "red" : "inherit",
+      fontWeight: isCritical ? "bold" : "normal",
+    };
+  };
 
   return (
     <Card
       sx={{
         display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: "column",
         padding: "16px",
         borderRadius: "8px",
         boxShadow: 3,
         marginBottom: "8px",
-        ...cardStyles, 
       }}
     >
       {/* Machine Name */}
-      <Box
-        sx={{
-          flex: 1,
-          padding: "0 16px",
-        }}
-      >
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          {machine.machine_name}
-        </Typography>
-        <Divider sx={{ my: 1 }} />
-      </Box>
+      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "8px" }}>
+        {machine_name}
+      </Typography>
+      <Divider sx={{ my: 1 }} />
 
-      {/* Sensor Data */}
+      {/* Dynamically Render Sensors */}
       <Box
         sx={{
-          flex: 2,
           display: "flex",
-          justifyContent: "space-around",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          gap: "16px",
         }}
       >
-        <Typography
-          variant="body1"
-          sx={{
-            fontWeight: "bold",
-            color: textStyles.vibrationColor,
-          }}
-        >
-          Vibration: <span>{machine.vibration.toFixed(2)} m/s²</span>
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            fontWeight: "bold",
-            color: textStyles.temperatureColor,
-          }}
-        >
-          Temperature: <span>{machine.temperature.toFixed(1)}°C</span>
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            fontWeight: "bold",
-            color: textStyles.pressureColor,
-          }}
-        >
-          Pressure: <span>{machine.pressure.toFixed(1)} bar</span>
-        </Typography>
+        {Object.entries(sensors).map(([key, value]) => (
+          <Box key={key} sx={{ flex: "1 1 45%" }}>
+            <Typography
+              variant="body1"
+              sx={{
+                ...getSensorStyles(key, value),
+              }}
+            >
+              {formatSensorName(key)}: {value.toFixed(2)}
+            </Typography>
+          </Box>
+        ))}
       </Box>
     </Card>
   );

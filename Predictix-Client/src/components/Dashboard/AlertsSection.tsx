@@ -8,18 +8,25 @@ export default function AlertsSection() {
   const [alerts, setAlerts] = useState<MachineSensors[]>([]);
 
   useEffect(() => {
-    axios.get(`${SERVER_ADDRESS}/alerts/1`).then((response) => {
-      const mappedAlerts: MachineSensors[] = response.data.machines.map((machine: any, index: number) => ({
-        machine_id: `${index}`, 
-        machine_name: machine.name,
-        vibration: machine.sensors.vibration,
-        temperature: machine.sensors.temperature,
-        pressure: machine.sensors.pressure,
-      }));
-
-      setAlerts(mappedAlerts);
-    });
+    axios
+      .get(`${SERVER_ADDRESS}/alerts/1`)
+      .then((response) => {
+        console.log("API Response:", response.data);
+  
+        if (response.data?.machines) {
+          const mappedAlerts = response.data.machines.map((machine: any, index: number) => ({
+            machine_id: `${index}`,
+            machine_name: machine.name || "Unknown",
+            sensors: machine.sensors || {}, // Include full sensors object
+          }));
+          setAlerts(mappedAlerts);
+        } else {
+          console.error("Unexpected response structure:", response.data);
+        }
+      })
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
+  
 
   return (
     <div>
