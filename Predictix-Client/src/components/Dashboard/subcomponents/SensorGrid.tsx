@@ -3,11 +3,24 @@ import { Box } from "@mui/material";
 import SensorCard from "./SensorCard";
 import { MachineSensors } from "../../../types/machine";
 
+
+const mapServerResponseToMachineSensors = (response: any): MachineSensors[] => {
+  return response.machines.map((machine: any, index: number) => ({
+    machine_id: `${index}`, 
+    machine_name: machine.name,
+    vibration: machine.sensors.vibration,
+    temperature: machine.sensors.temperature,
+    pressure: machine.sensors.pressure,
+  }));
+};
+
 interface SensorGridProps {
-  machineSensors: MachineSensors[];
+  response: any; 
 }
 
-const SensorGrid: React.FC<SensorGridProps> = ({ machineSensors }) => {
+const SensorGrid: React.FC<SensorGridProps> = ({ response }) => {
+  const machineSensors = mapServerResponseToMachineSensors(response);
+
   return (
     <Box
       sx={{
