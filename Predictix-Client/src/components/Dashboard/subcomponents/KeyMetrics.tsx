@@ -9,7 +9,7 @@ interface KeyMetricsProps {
 }
 
 export default function KeyMetrics({ overview }: KeyMetricsProps) {
-  const { down_time_hours_next_7_days, needs_maintenance_machines, total_machines } = overview;
+  const { needs_maintenance_machines, total_machines } = overview;
   return (
     <Box sx={{ display: "flex", gap: 2 }}>
       <Card sx={{ p: 2, flex: 1 }}>
@@ -21,10 +21,6 @@ export default function KeyMetrics({ overview }: KeyMetricsProps) {
         <Typography variant="h4" color="error">
           {needs_maintenance_machines}
         </Typography>
-      </Card>
-      <Card sx={{ p: 2, flex: 1 }}>
-        <Typography variant="h6">Downtime (Hours) next 7 days</Typography>
-        <Typography variant="h4">{down_time_hours_next_7_days}</Typography>
       </Card>
     </Box>
   );

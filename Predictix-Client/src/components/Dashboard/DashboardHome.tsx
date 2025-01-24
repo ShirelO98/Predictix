@@ -16,15 +16,17 @@ import { SERVER_ADDRESS } from "../../../constants";
 export default function DashboardHome() {
   const [factoryMachines, setFactoryMachines] = useState<Machine[]>([]);
   const [bankMachines, setBankMachines] = useState<Machine[]>([]);
-  const [overview, setOverview] = useState<Overview>({ down_time_hours_next_7_days: 0, needs_maintenance_machines: 0, total_machines: 0 });
+  const [overview, setOverview] = useState<Overview>({ needs_maintenance_machines: 0, total_machines: 0 });
   useEffect(() => {
     // Fetch all machines from the database - Shirel...
     axios.get(`${SERVER_ADDRESS}/getTaggedByFactory/1`).then((response) => {
-      setBankMachines(response.data);
+      console.log(response.data);
+      setBankMachines(response.data.machines);
     });
-    // axios.get(`${SERVER_ADDRESS}/overview/1`).then((response) => { 
-    //   setOverview(response.data);
-    // });
+
+    axios.get(`${SERVER_ADDRESS}/overview/1`).then((response) => { 
+      setOverview(response.data);
+    });
   }, []);
 
   // Add machine to the grid, preventing duplicates

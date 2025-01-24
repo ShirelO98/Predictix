@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useDrag } from "react-dnd";
 import { Machine } from "../../../types/machine";
@@ -9,6 +9,9 @@ interface MachineBankProps {
 }
 
 const MachineBank: React.FC<MachineBankProps> = ({ onMachineSelect, machines }) => {
+  useEffect(() => {
+    console.log(machines);
+  }, [machines]);
   return (
     <Box
       sx={{
@@ -37,6 +40,10 @@ const MachineBank: React.FC<MachineBankProps> = ({ onMachineSelect, machines }) 
   );
 };
 
+// getThemeByPredictionStatus = (status) => {
+//   [0]: {
+// }
+
 const DraggableMachine: React.FC<{ machine: Machine }> = ({ machine }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "machine",
@@ -60,7 +67,7 @@ const DraggableMachine: React.FC<{ machine: Machine }> = ({ machine }) => {
     >
       <CardContent>
         <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-          {machine.machine_name}
+          {machine.name}
         </Typography>
         <Typography variant="body2" color="textSecondary">
           Status: {machine.status}
