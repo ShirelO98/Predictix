@@ -18,7 +18,6 @@ export default function DashboardHome() {
   useEffect(() => {
     // Fetch all machines from the database - Shirel...
     axios.get(`${SERVER_ADDRESS}/getTaggedByFactory/1`).then((response) => {
-      console.log(response.data);
       setBankMachines(response.data.machines);
     });
 

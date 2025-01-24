@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useDrag } from "react-dnd";
 import { Machine } from "../../../types/machine";
+import MachineCard from "./MachineCard";
 
 interface MachineBankProps {
   onMachineSelect: (machine: Machine) => void;
@@ -9,9 +10,6 @@ interface MachineBankProps {
 }
 
 const MachineBank: React.FC<MachineBankProps> = ({ onMachineSelect, machines }) => {
-  useEffect(() => {
-    console.log(machines);
-  }, [machines]);
   return (
     <Box
       sx={{
@@ -33,16 +31,17 @@ const MachineBank: React.FC<MachineBankProps> = ({ onMachineSelect, machines }) 
         }}
       >
         {machines.map((machine) => (
-          <DraggableMachine key={machine.machine_id} machine={machine} />
+          <MachineCard key={machine.machine_id} machine={machine} />
         ))}
       </Box>
     </Box>
   );
 };
 
-// getThemeByPredictionStatus = (status) => {
-//   [0]: {
-// }
+const predictionStatusTheme = [
+  {borderColor: "orange"},
+  {borderColor: "green"},
+]
 
 const DraggableMachine: React.FC<{ machine: Machine }> = ({ machine }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -63,14 +62,12 @@ const DraggableMachine: React.FC<{ machine: Machine }> = ({ machine }) => {
         border: "1px solid #ddd",
         borderRadius: "10px",
         boxShadow: 3,
+        ...predictionStatusTheme[machine.prediction_status],
       }}
     >
       <CardContent>
         <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
           {machine.name}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Status: {machine.status}
         </Typography>
       </CardContent>
     </Card>
