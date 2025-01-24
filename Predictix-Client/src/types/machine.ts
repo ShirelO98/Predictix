@@ -29,7 +29,5 @@ export interface Machine {
 export interface MachineSensors {
   machine_id: string;
   machine_name: string;
-  vibration: number;
-  temperature: number;
-  pressure: number;
+  sensors: Record<string, number>;
 }

@@ -31,7 +31,7 @@ export default function AlertsSection() {
   return (
     <div>
       <h2>Sensor Grid</h2>
-      <SensorGrid response={{ machines: alerts }} />
+      <SensorGrid machines={alerts} />
     </div>
   );
 }

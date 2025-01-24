@@ -1,28 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 import SensorCard from "./SensorCard";
+import { MachineSensors } from "../../../types/machine";
 
 interface SensorGridProps {
-  response: any; // The raw API response
+  machines: MachineSensors[]; // The raw API response
 }
 
-const mapServerResponseToMachineSensors = (response: any): any[] => {
-  if (!response?.machines || response.machines.length === 0) {
-    console.error("No machines found in response:", response);
-    return [];
-  }
-
-  // Map API response to a more generic structure
-  return response.machines.map((machine: any, index: number) => ({
-    machine_id: `${index}`,
-    machine_name: machine.name || "Unnamed Machine",
-    sensors: machine.sensors || {}, // Pass the full sensors object
-  }));
-};
-
-const SensorGrid: React.FC<SensorGridProps> = ({ response }) => {
-  const machineSensors = mapServerResponseToMachineSensors(response);
-
+const SensorGrid: React.FC<SensorGridProps> = ({ machines }) => {
   return (
     <Box
       sx={{
@@ -36,7 +21,7 @@ const SensorGrid: React.FC<SensorGridProps> = ({ response }) => {
       }}
     >
       {/* Render each machine with its SensorCard */}
-      {machineSensors.map((machine) => (
+      {machines.map((machine) => (
         <SensorCard key={machine.machine_id} machine={machine} />
       ))}
     </Box>

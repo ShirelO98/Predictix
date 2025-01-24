@@ -1,11 +1,9 @@
 import React from "react";
 import { Card, Typography, Box, Divider } from "@mui/material";
+import { MachineSensors } from "../../../types/machine";
 
 interface SensorCardProps {
-  machine: {
-    machine_name: string;
-    sensors: Record<string, number>; // Generic structure for sensors
-  };
+  machine: MachineSensors;
 }
 
 // Thresholds for critical states (define as needed)
