@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import KeyMetrics from "./subcomponents/KeyMetrics";
-import MachineStatusGraph from "./subcomponents/MachineStatusGraph";
-import RecentAlerts from "./subcomponents/RecentAlerts";
 import MachineBank from "./subcomponents/MachineBank";
 import MachineGrid from "./subcomponents/MachineGrid";
 import { Machine } from "../../types/machine";
@@ -16,15 +14,17 @@ import { SERVER_ADDRESS } from "../../../constants";
 export default function DashboardHome() {
   const [factoryMachines, setFactoryMachines] = useState<Machine[]>([]);
   const [bankMachines, setBankMachines] = useState<Machine[]>([]);
-  const [overview, setOverview] = useState<Overview>({ down_time_hours_next_7_days: 0, needs_maintenance_machines: 0, total_machines: 0 });
+  const [overview, setOverview] = useState<Overview>({ needs_maintenance_machines: 0, total_machines: 0 });
   useEffect(() => {
     // Fetch all machines from the database - Shirel...
     axios.get(`${SERVER_ADDRESS}/getTaggedByFactory/1`).then((response) => {
-      setBankMachines(response.data);
+      console.log(response.data);
+      setBankMachines(response.data.machines);
     });
-    // axios.get(`${SERVER_ADDRESS}/overview/1`).then((response) => { 
-    //   setOverview(response.data);
-    // });
+
+    axios.get(`${SERVER_ADDRESS}/overview/1`).then((response) => { 
+      setOverview(response.data);
+    });
   }, []);
 
   // Add machine to the grid, preventing duplicates

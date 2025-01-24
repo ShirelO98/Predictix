@@ -1,21 +1,30 @@
-import React from "react";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-
-const alerts = [
-  { id: 1, machine: "Machine A", message: "High vibration detected" },
-  { id: 2, machine: "Machine B", message: "Temperature anomaly" },
-];
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import SensorGrid from "../Dashboard/subcomponents/SensorGrid";
+import { MachineSensors } from "../../types/machine";
+import { SERVER_ADDRESS } from "../../../constants";
 
 export default function AlertsSection() {
+  const [alerts, setAlerts] = useState<MachineSensors[]>([]);
+
+  useEffect(() => {
+    axios.get(`${SERVER_ADDRESS}/alerts/1`).then((response) => {
+      const mappedAlerts: MachineSensors[] = response.data.machines.map((machine: any, index: number) => ({
+        machine_id: `${index}`, 
+        machine_name: machine.name,
+        vibration: machine.sensors.vibration,
+        temperature: machine.sensors.temperature,
+        pressure: machine.sensors.pressure,
+      }));
+
+      setAlerts(mappedAlerts);
+    });
+  }, []);
+
   return (
-    <List>
-      {alerts.map((alert) => (
-        <ListItem key={alert.id}>
-          <ListItemText primary={alert.machine} secondary={alert.message} />
-        </ListItem>
-      ))}
-    </List>
+    <div>
+      <h2>Sensor Grid</h2>
+      <SensorGrid response={{ machines: alerts }} />
+    </div>
   );
 }
