@@ -9,7 +9,10 @@ import { Overview } from "../../types/overview";
 import axios from "axios";
 import { SERVER_ADDRESS } from "../../../constants";
 
-
+const setUniqueMachines = (machines: Machine[], machine: Machine) => {
+  if (machines.find((m) => m.machine_id === machine.machine_id)) return [...machines];
+  return [...machines, machine];
+}
 
 export default function DashboardHome() {
   const [factoryMachines, setFactoryMachines] = useState<Machine[]>([]);
@@ -28,13 +31,13 @@ export default function DashboardHome() {
 
   // Add machine to the grid, preventing duplicates
   const handleAddMachineToCompany = (machine: Machine) => {
-    setFactoryMachines((prev) => [...prev, machine]);
+    setFactoryMachines((prev) => setUniqueMachines(prev, machine));
     setBankMachines((prev) => prev.filter((m) => m.machine_id !== machine.machine_id));
   };
 
   // Remove machine from the grid
   const handleRemoveMachineFromCompany = (machine: Machine) => {
-    setBankMachines((prev) => [...prev, machine]);
+    setBankMachines((prev) => setUniqueMachines(prev, machine));
     setFactoryMachines((prev) => prev.filter((m) => m.machine_id !== machine.machine_id));
   };
 
