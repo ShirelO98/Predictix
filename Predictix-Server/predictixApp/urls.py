@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path("getTaggedByFactory/<int:factory_id>/", views.get_tagged_machines_by_factory, name="get_tagged_machines_by_factory"),
-    path("overview/<int:factory_id>/", views.overview, name="overview"),
     path("alerts/<int:factory_id>/", views.alerts, name="alerts"),
+    # path("overview/<int:factory_id>/", views.overview, name="overview"),
+    
 ]
