@@ -13,16 +13,14 @@ export default function DashboardHome() {
   const [overview, setOverview] = useState<Overview>({ needs_maintenance_machines: 0, total_machines: 0 });
   
   useEffect(() => {
-    // Fetch all machines from the database - Shirel...
     axios.get(`${SERVER_ADDRESS}/getTaggedByFactory/1`).then((response) => {
       setFactoryMachines(response.data.machines);
-    }).then(() => {
       setOverview({
-        needs_maintenance_machines: factoryMachines.filter((machine) => machine.prediction_status != 1).length,
-        total_machines: factoryMachines.length
+        needs_maintenance_machines: response.data.machines.filter((machine: Machine) => machine.prediction_status != 1).length,
+        total_machines: response.data.machines.length
       });
     });
-  }, [factoryMachines]);
+  }, []);
 
   return (
     <Box sx={{ p: 4 }}>
