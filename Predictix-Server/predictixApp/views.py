@@ -49,19 +49,19 @@ def alerts(request, factory_id):
         if hasattr(machine, 'thresholds'):
             thresholds = machine.thresholds  
             sensors = {
-                "temperature": {"value": machine.temperature, "threshold": thresholds.temperature_threshold, "alert": machine.temperature > thresholds.temperature_threshold},
-                "pressure": {"value": machine.pressure, "threshold": thresholds.pressure_threshold, "alert": machine.pressure > thresholds.pressure_threshold},
-                "vibration": {"value": machine.vibration, "threshold": thresholds.vibration_threshold, "alert": machine.vibration > thresholds.vibration_threshold},
-                "humidity": {"value": machine.humidity, "threshold": thresholds.humidity_threshold, "alert": machine.humidity > thresholds.humidity_threshold},
-                "noise_level": {"value": machine.noise_level, "threshold": thresholds.noise_level_threshold, "alert": machine.noise_level > thresholds.noise_level_threshold},
+                "temperature": {"value": machine.temperature, "threshold": thresholds.temperature_threshold},
+                "pressure": {"value": machine.pressure, "threshold": thresholds.pressure_threshold},
+                "vibration": {"value": machine.vibration, "threshold": thresholds.vibration_threshold},
+                "humidity": {"value": machine.humidity, "threshold": thresholds.humidity_threshold},
+                "noise_level": {"value": machine.noise_level, "threshold": thresholds.noise_level_threshold},
             }
         else:
             sensors = {
-                "temperature": {"value": machine.temperature, "threshold": None, "alert": None},
-                "pressure": {"value": machine.pressure, "threshold": None, "alert": None},
-                "vibration": {"value": machine.vibration, "threshold": None, "alert": None},
-                "humidity": {"value": machine.humidity, "threshold": None, "alert": None},
-                "noise_level": {"value": machine.noise_level, "threshold": None, "alert": None},
+                "temperature": {"value": machine.temperature, "threshold": None},
+                "pressure": {"value": machine.pressure, "threshold": None},
+                "vibration": {"value": machine.vibration, "threshold": None},
+                "humidity": {"value": machine.humidity, "threshold": None},
+                "noise_level": {"value": machine.noise_level, "threshold": None},
             }
         
         machines_data.append({"name": machine.name, "sensors": sensors})
