@@ -62,6 +62,7 @@ const SensorCard: React.FC<SensorCardProps> = ({ machine }) => {
       <SensorsThresholdButton
         sensors={sensorsData}
         onSaveThresholds={handleSaveThresholds}
+       machineID={machine.machine_id}
       />
 
       <Divider sx={{ my: 1 }} />
