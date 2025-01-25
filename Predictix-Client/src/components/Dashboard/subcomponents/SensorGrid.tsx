@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 import SensorCard from "./SensorCard";
 import { MachineSensors } from "../../../types/machine";
+import ErrorBoundary from "./ErrorBoundary";
 
 interface SensorGridProps {
   machines: MachineSensors[]; // The raw API response
@@ -22,7 +23,9 @@ const SensorGrid: React.FC<SensorGridProps> = ({ machines }) => {
     >
       {/* Render each machine with its SensorCard */}
       {machines.map((machine) => (
-        <SensorCard key={machine.machine_id} machine={machine} />
+        <ErrorBoundary>
+          <SensorCard key={machine.machine_id} machine={machine} />
+        </ErrorBoundary>
       ))}
     </Box>
   );

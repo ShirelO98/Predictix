@@ -17,9 +17,10 @@ export default function AlertsSection() {
           const mappedAlerts = response.data.machines.map((machine: any, index: number) => ({
             machine_id: `${index}`,
             machine_name: machine.name || "Unknown",
-            sensors: machine.sensors || {}, // Include full sensors object
+            sensors: machine.sensors || {}, 
           }));
           setAlerts(mappedAlerts);
+          
         } else {
           console.error("Unexpected response structure:", response.data);
         }
@@ -30,8 +31,8 @@ export default function AlertsSection() {
 
   return (
     <div>
-      <h2>Sensor Grid</h2>
-      <SensorGrid machines={alerts} />
+      <h2> Sensor Grid</h2>
+      <SensorGrid machines={alerts}  />   
     </div>
   );
 }
