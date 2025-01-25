@@ -14,7 +14,7 @@ export default function AlertsSection() {
         console.log("API Response:", response.data);
   
         if (response.data?.machines) {
-          const mappedAlerts = response.data.machines.map((machine: any, index: number) => ({
+          const mappedAlerts = response.data.machines.map((machine: any) => ({
             machine_id: machine.machine_id,
             machine_name: machine.name || "Unknown",
             sensors: machine.sensors || {}, // Include full sensors object
