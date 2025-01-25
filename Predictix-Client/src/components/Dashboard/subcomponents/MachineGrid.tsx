@@ -7,13 +7,20 @@ import { Machine } from "../../../types/machine";
 
 interface MachineGridProps {
   machines: Machine[];
+  onReorder: (newOrder: Machine[]) => void;
 }
 
-const MachineGrid: React.FC<MachineGridProps> = ({ machines }) => {
+const MachineGrid: React.FC<MachineGridProps> = ({ machines, onReorder }) => {
+
+  const moveMachine = (dragIndex: number, hoverIndex: number) => {
+    const updatedMachines = [...machines];
+    const [draggedMachine] = updatedMachines.splice(dragIndex, 1);
+    updatedMachines.splice(hoverIndex, 0, draggedMachine);
+    onReorder(updatedMachines);
+  };
+
   const [, drop] = useDrop(() => ({
     accept: "machine",
-    drop: (item: Machine) => {
-    },
   }));
 
   return (
@@ -35,6 +42,8 @@ const MachineGrid: React.FC<MachineGridProps> = ({ machines }) => {
           <Grid2 key={machine.machine_id} >
             <MachineCard
               machine={machine}
+              index={index}
+              moveMachine={moveMachine}
             />
           </Grid2>
         ))}

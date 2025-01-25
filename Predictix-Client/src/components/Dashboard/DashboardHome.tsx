@@ -33,6 +33,7 @@ export default function DashboardHome() {
       <Box sx={{ display: "flex", gap: 4 }}>
         <MachineGrid
           machines={factoryMachines}
+          onReorder={setFactoryMachines}
         />
       </Box>
     </Box>

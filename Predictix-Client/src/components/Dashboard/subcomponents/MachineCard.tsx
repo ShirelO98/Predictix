@@ -1,10 +1,12 @@
 import React from "react";
-import { useDrag } from "react-dnd";
+import { useDrag, useDrop } from "react-dnd";
 import { Card, CardContent, Typography, Box, Divider } from "@mui/material";
 import { Machine } from "../../../types/machine";
 
 interface MachineCardProps {
   machine: Machine;
+  index: number;
+  moveMachine: (dragIndex: number, hoverIndex: number) => void;
 }
 
 const predictionStatusTheme = [
@@ -12,18 +14,32 @@ const predictionStatusTheme = [
   {borderColor: "green"},
 ]
 
-const MachineCard: React.FC<MachineCardProps> = ({ machine }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
+const MachineCard: React.FC<MachineCardProps> = ({ machine, index, moveMachine }) => {
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  const [{ isDragging }, drag] = useDrag({
     type: "machine",
-    item: machine,
+    item: { index },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
-  }));
+  });
+
+  const [, drop] = useDrop({
+    accept: "machine",
+    hover: (draggedItem: { index: number }) => {
+      if (draggedItem.index !== index) {
+        moveMachine(draggedItem.index, index);
+        draggedItem.index = index;
+      }
+    },
+  });
+
+  drag(drop(ref));
 
   return (
     <Card
-      ref={drag}
+      ref={ref}
       sx={{
         border: "2px solid",
         borderRadius: "8px",
