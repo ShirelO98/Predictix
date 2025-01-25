@@ -5,4 +5,8 @@ class PredictixAppConfig(AppConfig):
     name = 'predictixApp'
 
     def ready(self):
-        import predictixApp.signals 
+        """
+        function to start the sensor update task when the app is ready.
+        """
+        from .tasks import start_sensor_update_task
+        start_sensor_update_task()
