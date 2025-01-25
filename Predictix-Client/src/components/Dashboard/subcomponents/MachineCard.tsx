@@ -1,12 +1,10 @@
 import React from "react";
 import { useDrag } from "react-dnd";
-import { Card, CardContent, Typography, Box, Chip, Divider, IconButton } from "@mui/material";
-import { Close as CloseIcon } from "@mui/icons-material";
+import { Card, CardContent, Typography, Box, Divider } from "@mui/material";
 import { Machine } from "../../../types/machine";
 
 interface MachineCardProps {
   machine: Machine;
-  onRemove?: () => void;
 }
 
 const predictionStatusTheme = [
@@ -14,7 +12,7 @@ const predictionStatusTheme = [
   {borderColor: "green"},
 ]
 
-const MachineCard: React.FC<MachineCardProps> = ({ machine, onRemove }) => {
+const MachineCard: React.FC<MachineCardProps> = ({ machine }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "machine",
     item: machine,
@@ -37,25 +35,10 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine, onRemove }) => {
         ...predictionStatusTheme[machine.prediction_status],
       }}
     >
-      {/* Delete Button */}
-      {onRemove && <IconButton
-        onClick={onRemove}
-        sx={{ position: "absolute", top: "8px", right: "8px" }}
-        size="small"
-        color="error"
-      >
-        <CloseIcon />
-      </IconButton>}
-
       <CardContent>
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           {machine.name}
         </Typography>
-        <Chip
-          label={machine.status}
-          color={machine.status === "Running" ? "success" : "default"}
-          size="small"
-        />
         <Divider sx={{ my: 2 }} />
         <Box>
           <Typography variant="body2">

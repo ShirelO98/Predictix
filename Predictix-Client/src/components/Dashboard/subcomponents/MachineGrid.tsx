@@ -7,15 +7,12 @@ import { Machine } from "../../../types/machine";
 
 interface MachineGridProps {
   machines: Machine[];
-  onMachineDrop: (machine: Machine) => void;
-  onMachineRemove: (machine: Machine) => void;
 }
 
-const MachineGrid: React.FC<MachineGridProps> = ({ machines, onMachineDrop, onMachineRemove }) => {
+const MachineGrid: React.FC<MachineGridProps> = ({ machines }) => {
   const [, drop] = useDrop(() => ({
     accept: "machine",
     drop: (item: Machine) => {
-      onMachineDrop(item); // Ensure drop only adds new machines
     },
   }));
 
@@ -34,11 +31,10 @@ const MachineGrid: React.FC<MachineGridProps> = ({ machines, onMachineDrop, onMa
         Factory Grid
       </Typography>
       <Grid2 container spacing={2}>
-        {machines.map((machine) => (
+        {machines.map((machine, index) => (
           <Grid2 key={machine.machine_id} >
             <MachineCard
               machine={machine}
-              onRemove={() => onMachineRemove(machine)}
             />
           </Grid2>
         ))}
