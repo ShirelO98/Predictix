@@ -55,7 +55,6 @@ class Machine(models.Model):
     humidity = models.FloatField(null=True, blank=True)
     noise_level = models.FloatField(null=True, blank=True)
 
-    # הוספת שדה סטטוס עם ערך ברירת מחדל 0
     prediction_status = models.IntegerField(default=0)
 
     def __str__(self):
