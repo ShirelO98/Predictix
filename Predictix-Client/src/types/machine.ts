@@ -29,5 +29,5 @@ export interface Machine {
 export interface MachineSensors {
   machine_id: string;
   machine_name: string;
-  sensors: Record<string, number>;
+  sensors: Record<string, {value: number; threshold: number}>;
 }
