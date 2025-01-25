@@ -43,11 +43,11 @@ def get_tagged_machines_by_factory(request, factory_id):
 def alerts(request, factory_id):
     factory = get_object_or_404(Factory, id=factory_id)
     machines = factory.machines.all()
-    
+
     machines_data = []
     for machine in machines:
-        if hasattr(machine, 'thresholds'):
-            thresholds = machine.thresholds  
+        thresholds = MachineThreshold.objects.filter(machine=machine).first() 
+        if thresholds:
             sensors = {
                 "temperature": {"value": machine.temperature, "threshold": thresholds.temperature_threshold},
                 "pressure": {"value": machine.pressure, "threshold": thresholds.pressure_threshold},
@@ -63,15 +63,15 @@ def alerts(request, factory_id):
                 "humidity": {"value": machine.humidity, "threshold": None},
                 "noise_level": {"value": machine.noise_level, "threshold": None},
             }
-        
-        # הוספת machine_id לרשומה
+
         machines_data.append({
             "machine_id": machine.machine_id,
             "name": machine.name,
-            "sensors": sensors
+            "sensors": sensors,
         })
-    
+
     return JsonResponse({"factory_id": factory_id, "machines": machines_data}, safe=False)
+
 
 
 @csrf_exempt
@@ -79,22 +79,23 @@ def update_thresholds(request, machine_id):
     if request.method == "POST":
         try:
 
-            machine = get_object_or_404(Machine, id=machine_id)
-            thresholds = machine.thresholds  
+            machine = get_object_or_404(Machine, machine_id=machine_id) 
 
+            thresholds, created = MachineThreshold.objects.get_or_create(machine=machine)
+          
             data = json.loads(request.body)
-            temperature_threshold = data.get("temperature_threshold", thresholds.temperature_threshold)
-            pressure_threshold = data.get("pressure_threshold", thresholds.pressure_threshold)
-            vibration_threshold = data.get("vibration_threshold", thresholds.vibration_threshold)
-            humidity_threshold = data.get("humidity_threshold", thresholds.humidity_threshold)
-            noise_level_threshold = data.get("noise_level_threshold", thresholds.noise_level_threshold)
 
-         
-            thresholds.temperature_threshold = temperature_threshold
-            thresholds.pressure_threshold = pressure_threshold
-            thresholds.vibration_threshold = vibration_threshold
-            thresholds.humidity_threshold = humidity_threshold
-            thresholds.noise_level_threshold = noise_level_threshold
+            if "temperature_threshold" in data:
+                thresholds.temperature_threshold = data["temperature_threshold"]
+            if "pressure_threshold" in data:
+                thresholds.pressure_threshold = data["pressure_threshold"]
+            if "vibration_threshold" in data:
+                thresholds.vibration_threshold = data["vibration_threshold"]
+            if "humidity_threshold" in data:
+                thresholds.humidity_threshold = data["humidity_threshold"]
+            if "noise_level_threshold" in data:
+                thresholds.noise_level_threshold = data["noise_level_threshold"]
+
             thresholds.save()
 
             return JsonResponse({
