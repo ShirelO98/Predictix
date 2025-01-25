@@ -64,17 +64,21 @@ def alerts(request, factory_id):
                 "noise_level": {"value": machine.noise_level, "threshold": None},
             }
         
-        machines_data.append({"name": machine.name, "sensors": sensors})
+        # הוספת machine_id לרשומה
+        machines_data.append({
+            "machine_id": machine.machine_id,
+            "name": machine.name,
+            "sensors": sensors
+        })
     
     return JsonResponse({"factory_id": factory_id, "machines": machines_data}, safe=False)
-
-
 
 
 @csrf_exempt
 def update_thresholds(request, machine_id):
     if request.method == "POST":
         try:
+
             machine = get_object_or_404(Machine, id=machine_id)
             thresholds = machine.thresholds  
 
