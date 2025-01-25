@@ -13,6 +13,9 @@ lightgbm = "*"
 matplotlib = "*"
 seaborn = "*"
 tk = "*"
+celery = {extras = ["redis"], version = "*"}
+django-celery-beat = "*"
+schedule = "*"
 
 [dev-packages]
 

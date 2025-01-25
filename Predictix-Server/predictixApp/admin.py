@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import MachineHistory
-from .models import Factory, Machine
+from .models import Factory, Machine, MachineThreshold
 
 @admin.register(MachineHistory)
 class MachineHistoryAdmin(admin.ModelAdmin):
@@ -22,3 +22,14 @@ class MachineAdmin(admin.ModelAdmin):
     list_filter = ('type', 'manufacturer', 'status', 'factories')
     search_fields = ('machine_id', 'name', 'manufacturer')
     ordering = ('-installation_date',)
+
+@admin.register(MachineThreshold)
+class MachineThresholdAdmin(admin.ModelAdmin):
+    list_display = (
+        "machine",
+        "temperature_threshold",
+        "pressure_threshold",
+        "vibration_threshold",
+        "humidity_threshold",
+        "noise_level_threshold",
+    )

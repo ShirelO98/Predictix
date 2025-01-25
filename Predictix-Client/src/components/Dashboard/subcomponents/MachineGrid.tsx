@@ -7,16 +7,20 @@ import { Machine } from "../../../types/machine";
 
 interface MachineGridProps {
   machines: Machine[];
-  onMachineDrop: (machine: Machine) => void;
-  onMachineRemove: (machine: Machine) => void;
+  onReorder: (newOrder: Machine[]) => void;
 }
 
-const MachineGrid: React.FC<MachineGridProps> = ({ machines, onMachineDrop, onMachineRemove }) => {
+const MachineGrid: React.FC<MachineGridProps> = ({ machines, onReorder }) => {
+
+  const moveMachine = (dragIndex: number, hoverIndex: number) => {
+    const updatedMachines = [...machines];
+    const [draggedMachine] = updatedMachines.splice(dragIndex, 1);
+    updatedMachines.splice(hoverIndex, 0, draggedMachine);
+    onReorder(updatedMachines);
+  };
+
   const [, drop] = useDrop(() => ({
     accept: "machine",
-    drop: (item: Machine) => {
-      onMachineDrop(item); // Ensure drop only adds new machines
-    },
   }));
 
   return (
@@ -34,11 +38,12 @@ const MachineGrid: React.FC<MachineGridProps> = ({ machines, onMachineDrop, onMa
         Factory Grid
       </Typography>
       <Grid2 container spacing={2}>
-        {machines.map((machine) => (
+        {machines.map((machine, index) => (
           <Grid2 key={machine.machine_id} >
             <MachineCard
               machine={machine}
-              onRemove={() => onMachineRemove(machine)}
+              index={index}
+              moveMachine={moveMachine}
             />
           </Grid2>
         ))}

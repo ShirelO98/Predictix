@@ -55,9 +55,19 @@ class Machine(models.Model):
     humidity = models.FloatField(null=True, blank=True)
     noise_level = models.FloatField(null=True, blank=True)
 
-    # הוספת שדה סטטוס עם ערך ברירת מחדל 0
     prediction_status = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.name} ({self.machine_id})"
 
+
+class MachineThreshold(models.Model):
+    machine = models.OneToOneField(Machine, on_delete=models.CASCADE, related_name="thresholds")
+    temperature_threshold = models.FloatField(default=100)
+    pressure_threshold = models.FloatField(default=100)
+    vibration_threshold = models.FloatField(default=100)
+    humidity_threshold = models.FloatField(default=100)
+    noise_level_threshold = models.FloatField(default=100)
+
+    def __str__(self):
+        return f"Thresholds for {self.machine.name}"
