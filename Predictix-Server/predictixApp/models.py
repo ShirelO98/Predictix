@@ -60,3 +60,14 @@ class Machine(models.Model):
     def __str__(self):
         return f"{self.name} ({self.machine_id})"
 
+
+class MachineThreshold(models.Model):
+    machine = models.OneToOneField(Machine, on_delete=models.CASCADE, related_name="thresholds")
+    temperature_threshold = models.FloatField(default=100)
+    pressure_threshold = models.FloatField(default=100)
+    vibration_threshold = models.FloatField(default=100)
+    humidity_threshold = models.FloatField(default=100)
+    noise_level_threshold = models.FloatField(default=100)
+
+    def __str__(self):
+        return f"Thresholds for {self.machine.name}"
