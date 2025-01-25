@@ -6,6 +6,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
 import { Sensor } from "../../../types/Sensor";
+import axios from "axios";
+import { SERVER_ADDRESS } from "../../../../constants";
 
 const style = {
   position: "absolute",
@@ -22,11 +24,13 @@ const style = {
 interface SensorsThresholdProps {
   sensors: Sensor[];
   onSaveThresholds: (updatedSensors: Sensor[]) => void;
+  machineID: string; // Explicitly define machineID as a required prop
 }
 
 export default function SensorsThresholdButton({
   sensors,
   onSaveThresholds,
+  machineID, 
 }: SensorsThresholdProps) {
   const [open, setOpen] = useState(false);
   const [thresholds, setThresholds] = useState<number[]>([]);
@@ -50,13 +54,36 @@ export default function SensorsThresholdButton({
     }
   };
 
-  const handleSave = () => {
-    const updatedSensors = sensors.map((sensor, index) => ({
-      ...sensor,
-      thresholdValue: thresholds[index],
-    }));
-    onSaveThresholds(updatedSensors); // Notify the parent component
-    handleClose();
+  const handleSave = async () => {
+    try {
+      // Prepare the payload for the API
+      const updatedThresholdsPayload = sensors.reduce((acc, sensor, index) => {
+        acc[`${sensor.sensorName}_threshold`] = thresholds[index];
+        return acc;
+      }, {} as Record<string, number>);
+
+      // Make the POST request with machineID
+      const response = await axios.post(
+        `${SERVER_ADDRESS}/update_thresholds/${machineID}/`, // Use machineID directly
+        updatedThresholdsPayload
+      );
+
+      if (response.data.message === "Thresholds updated successfully.") {
+        console.log("Updated Thresholds:", response.data.updated_thresholds);
+      }
+
+      // Notify the parent component with the updated sensors
+      const updatedSensors = sensors.map((sensor, index) => ({
+        ...sensor,
+        thresholdValue: thresholds[index],
+      }));
+      onSaveThresholds(updatedSensors);
+
+      // Close the modal
+      handleClose();
+    } catch (error) {
+      console.error("Error updating thresholds:", error);
+    }
   };
 
   return (
@@ -96,7 +123,10 @@ export default function SensorsThresholdButton({
               />
             </div>
           ))}
-          <Button onClick={handleSave} sx={{ mt: 2 }}>
+          <Button
+            onClick={handleSave} // Directly use handleSave (no destructuring needed here)
+            style={{ marginTop: "20px" }}
+          >
             Save Thresholds
           </Button>
         </Box>
