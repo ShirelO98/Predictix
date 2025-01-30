@@ -1,33 +1,32 @@
-// export interface Machine {
-//     machineID:string;
-//     machineName:string;
-//     vibration:number;
-//     temperature:number;
-//     pressure:number;
-//     status:string;
-//     lastMaintenanceDate:string;
-//     nextMaintenanceDate:string;
-//     upTime:number;
-//     downTime:number;
-// }
 export interface Machine {
-  machine_id: string; 
+  machine_id: string;
   name: string;
-  vibration?: number; 
-  temperature?: number; 
-  pressure?: number;
-  status?: string; 
-  type: string; 
-  manufacturer: string; 
-  down_time?: number; 
-  last_maintenance_date?: Date; 
-  next_maintenance_date?: Date; 
-  up_time?: number; 
-  prediction_status: number;
+  sensors: Record<string, number>;
+  section: string;
+  dependencies: string[];
+  manufacturer: string;
+  down_time?: number;
+  last_maintenance_date?: Date;
+  next_maintenance_date?: Date;
+  up_time?: number;
+  prediction_status: boolean;
+}
+export interface MachineNode {
+  machinde: Machine;
+  dependencies: MachineNode[];
+}
+export interface FlowData {
+  Name: string;
+  Head: MachineNode;
 }
 
 export interface MachineSensors {
   machine_id: string;
   machine_name: string;
-  sensors: Record<string, {value: number; threshold: number}>;
+  sensors: Record<string, { value: number; threshold: number }>;
+}
+
+export interface MachineNodeData {
+  name: string;
+  sensors: Record<string, number>;
 }

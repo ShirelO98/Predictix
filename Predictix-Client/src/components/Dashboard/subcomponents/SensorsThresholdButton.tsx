@@ -56,30 +56,22 @@ export default function SensorsThresholdButton({
 
   const handleSave = async () => {
     try {
-      // Prepare the payload for the API
       const updatedThresholdsPayload = sensors.reduce((acc, sensor, index) => {
         acc[`${sensor.sensorName}_threshold`] = thresholds[index];
         return acc;
-      }, {} as Record<string, number>);
-
-      // Make the POST request with machineID
+      }, {} as Record<string, number>)
       const response = await axios.post(
-        `${SERVER_ADDRESS}/update_thresholds/${machineID}/`, // Use machineID directly
+        `${SERVER_ADDRESS}/update_thresholds/${machineID}/`, 
         updatedThresholdsPayload
       );
-
       if (response.data.message === "Thresholds updated successfully.") {
         console.log("Updated Thresholds:", response.data.updated_thresholds);
       }
-
-      // Notify the parent component with the updated sensors
       const updatedSensors = sensors.map((sensor, index) => ({
         ...sensor,
         thresholdValue: thresholds[index],
       }));
       onSaveThresholds(updatedSensors);
-
-      // Close the modal
       handleClose();
     } catch (error) {
       console.error("Error updating thresholds:", error);
@@ -124,7 +116,7 @@ export default function SensorsThresholdButton({
             </div>
           ))}
           <Button
-            onClick={handleSave} // Directly use handleSave (no destructuring needed here)
+            onClick={handleSave} 
             style={{ marginTop: "20px" }}
           >
             Save Thresholds
