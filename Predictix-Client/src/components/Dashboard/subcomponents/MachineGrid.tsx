@@ -15,10 +15,10 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import MachineCard from "./MachineCard";
-import { MachineNode, FlowData } from "../../../types/machine"; // ✅ Use FlowData
+import { FlowData, MachineNode } from "../../../types/machine";
 
-// **Example FlowData Structure**
-const factoryFlow: FlowData[] = [
+
+const factoryFlows: FlowData[] = [
   {
     Name: "Heating Process",
     Head: {
@@ -26,53 +26,28 @@ const factoryFlow: FlowData[] = [
         machine_id: "1",
         name: "Boiler",
         sensors: { temperature: 100, pressure: 1.2, vibration: 0.5 },
-        dependencies: ["2"],
         manufacturer: "Siemens",
         prediction_status: true,
       },
-    },
-  },
-  {
-    Name: "Pumping Process",
-    Head: {
-      machine: {
-        machine_id: "2",
-        name: "Pump",
-        sensors: { pressure: 2.0 },
-        dependencies: ["3"],
-        manufacturer: "ABB",
-        prediction_status: true,
+      position: { x: 50, y: 200 }, // ✅ Added position
+      next: {
+        machine: {
+          machine_id: "2",
+          name: "Pump",
+          sensors: { pressure: 2.0 },
+          manufacturer: "ABB",
+          prediction_status: true,
+        },
+        position: { x: 300, y: 200 }, // ✅ Added position
+        next: null, // ✅ Works now
+        critical: false,
       },
-    },
-  },
-  {
-    Name: "Assembly Line",
-    Head: {
-      machine: {
-        machine_id: "3",
-        name: "Conveyor",
-        sensors: { speed: 1.5 },
-        dependencies: ["4"],
-        manufacturer: "Bosch",
-        prediction_status: true,
-      },
-    },
-  },
-  {
-    Name: "Cooling Process",
-    Head: {
-      machine: {
-        machine_id: "4",
-        name: "Cooling System",
-        sensors: { temperature: 20 },
-        dependencies: [],
-        manufacturer: "GE",
-        prediction_status: true,
-      },
+      critical: true,
     },
   },
 ];
 
+// **Custom Node Types**
 const nodeTypes: NodeTypes = {
   machine: MachineCard,
   flow: ({ data }: { data: { label: string } }) => (
@@ -92,20 +67,40 @@ const nodeTypes: NodeTypes = {
   ),
 };
 
+// **Extract Edges from `next`**
+const extractEdges = (node: MachineNode | null, edges: Edge[] = []): Edge[] => {
+  if (!node || node.next === null) return edges;
+  edges.push({
+    id: `edge-${node.machine.machine_id}-${node.next.machine.machine_id}`,
+    source: node.machine.machine_id,
+    target: node.next.machine.machine_id,
+    animated: true,
+    style: { strokeWidth: 5, stroke: "black" },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14 },
+  });
+  return extractEdges(node.next, edges);
+};
+
+// **Extract Nodes from `next`**
+const extractNodes = (node: MachineNode | null, nodes: Node[] = [], xOffset = 0): Node[] => {
+  if (!node) return nodes;
+  nodes.push({
+    id: node.machine.machine_id,
+    position: { x: xOffset, y: 200 },
+    draggable: true,
+    data: {
+      name: node.machine.name,
+      sensors: node.machine.sensors,
+      failed: !node.machine.prediction_status,
+    },
+    type: "machine",
+  });
+  return extractNodes(node.next, nodes, xOffset + 250);
+};
+
 const MachineGrid: React.FC = () => {
-  const [flows, setFlows] = useState<FlowData[]>(factoryFlow);
-  const [edges, setEdges] = useState<Edge[]>(
-    factoryFlow.flatMap((flow) =>
-      flow.Head.machine.dependencies.map((target) => ({
-        id: `edge-${flow.Head.machine.machine_id}-${target}`,
-        source: flow.Head.machine.machine_id,
-        target: target,
-        animated: true,
-        style: { strokeWidth: 5, stroke: "black" },
-        markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14 },
-      }))
-    )
-  );
+  const [flows, setFlows] = useState<FlowData[]>(factoryFlows);
+  const [edges, setEdges] = useState<Edge[]>(flows.flatMap((flow) => extractEdges(flow.Head)));
 
   // Generate Flow Nodes (Group Nodes)
   const flowNodes: Node[] = flows.map((flow, index) => ({
@@ -115,38 +110,44 @@ const MachineGrid: React.FC = () => {
     type: "flow",
   }));
 
-  // Generate Machine Nodes
-  const machineNodes: Node[] = flows.map((flow, index) => ({
-    id: flow.Head.machine.machine_id,
-    position: { x: index * 250 + 50, y: 200 },
-    parentId: `flow-${flow.Name}`,
-    draggable: true,
-    data: {
-      name: flow.Head.machine.name,
-      sensors: flow.Head.machine.sensors,
-      failed: !flow.Head.machine.prediction_status,
-    },
-    type: "machine",
-  }));
+  // Generate Machine Nodes Dynamically
+  const machineNodes: Node[] = flows.flatMap((flow) => extractNodes(flow.Head));
 
   const nodes = [...flowNodes, ...machineNodes];
 
-  // Handle Node Dragging
+  // **Recursive Function to Update Machine Position**
+  const updateMachinePosition = (node: MachineNode | null, updatedNode: NodeChange): MachineNode | null => {
+    if (!node) return node;
+  
+    // Ensure `updatedNode` is a position change
+    if (updatedNode.type === "position" && "id" in updatedNode && updatedNode.id === node.machine.machine_id) {
+      const positionChange = updatedNode as { position?: { x: number; y: number } }; // Type assertion
+      return {
+        ...node,
+        position: positionChange.position ? positionChange.position : { x: 0, y: 0 }, // ✅ Safe position handling
+      };
+    }
+  
+    // **Recursively update `next` if it's not null**
+    return {
+      ...node,
+      next: node.next !== null ? updateMachinePosition(node.next, updatedNode) : null,
+    };
+  };
+  
+
+  // **Handle Node Dragging**
   const onNodesChange = useCallback((changes: NodeChange[]) => {
     setFlows((prevFlows) =>
       prevFlows.map((flow) => {
-        const updatedNode = changes.find((change) => "id" in change && change.id === flow.Head.machine.machine_id);
-        return updatedNode && "position" in updatedNode
-          ? {
-              ...flow,
-              Head: {
-                machine: {
-                  ...flow.Head.machine,
-                  position: updatedNode.position || { x: 0, y: 0 },
-                },
-              },
-            }
-          : flow;
+        // Find the first change that has `id` and is a position change
+        const updatedNode = changes.find((change) => change.type === "position" && "id" in change);
+        if (!updatedNode) return flow; // Skip if no valid update
+
+        return {
+          ...flow,
+          Head: updateMachinePosition(flow.Head, updatedNode)!,
+        };
       })
     );
   }, []);
@@ -156,21 +157,8 @@ const MachineGrid: React.FC = () => {
   }, []);
 
   const onConnect = useCallback((connection: Connection) => {
-    setEdges((prevEdges) => {
-      const isExisting = prevEdges.some((edge) => edge.source === connection.source);
-      return isExisting ? prevEdges : addEdge(connection, prevEdges);
-    });
+    setEdges((prevEdges) => addEdge(connection, prevEdges));
   }, []);
-
-  const failMachine = (id: string) => {
-    setFlows((prevFlows) =>
-      prevFlows.map((flow) =>
-        flow.Head.machine.machine_id === id
-          ? { ...flow, Head: { machine: { ...flow.Head.machine, prediction_status: false } } }
-          : flow
-      )
-    );
-  };
 
   return (
     <div style={{ width: "100vw", height: "90vh" }}>
@@ -184,16 +172,12 @@ const MachineGrid: React.FC = () => {
         onConnect={onConnect}
         fitView
         panOnDrag
-        zoomOnScroll={false}
+        zoomOnScroll={false} // **Prevents zooming**
       >
         <Background color="#333" />
         <MiniMap pannable zoomable nodeStrokeWidth={3} nodeColor="green" />
         <Controls showZoom={false} />
       </ReactFlow>
-
-      <button onClick={() => failMachine("2")} style={{ position: "absolute", top: 20, left: 20 }}>
-        Simulate Pump Failure
-      </button>
     </div>
   );
 };

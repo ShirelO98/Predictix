@@ -2,7 +2,6 @@ export interface Machine {
   machine_id: string;
   name: string;
   sensors: Record<string, number>;
-  dependencies: string[];
   manufacturer: string;
   down_time?: number;
   last_maintenance_date?: Date;
@@ -12,8 +11,11 @@ export interface Machine {
 }
 export interface MachineNode {
   machine: Machine;
-  dependencies: MachineNode[];
+  position: { x: number; y: number }; 
+  next: MachineNode | null;
+  critical: boolean;
 }
+
 export interface FlowData {
   Name: string;
   Head: MachineNode;
