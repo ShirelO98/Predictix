@@ -15,60 +15,67 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import MachineCard from "./MachineCard";
-import { Machine, MachineNodeData,MachineNode,FlowData } from "../../../types/machine";
+import { MachineNode, FlowData } from "../../../types/machine"; // ✅ Use FlowData
 
-// Define factory sections dynamically
-const sections = [
-  { id: "heating", label: "Heating Section" },
-  { id: "pumps", label: "Pumps Section" },
-  { id: "assembly", label: "Assembly Line" },
-  { id: "cooling", label: "Cooling Section" },
+// **Example FlowData Structure**
+const factoryFlow: FlowData[] = [
+  {
+    Name: "Heating Process",
+    Head: {
+      machine: {
+        machine_id: "1",
+        name: "Boiler",
+        sensors: { temperature: 100, pressure: 1.2, vibration: 0.5 },
+        dependencies: ["2"],
+        manufacturer: "Siemens",
+        prediction_status: true,
+      },
+    },
+  },
+  {
+    Name: "Pumping Process",
+    Head: {
+      machine: {
+        machine_id: "2",
+        name: "Pump",
+        sensors: { pressure: 2.0 },
+        dependencies: ["3"],
+        manufacturer: "ABB",
+        prediction_status: true,
+      },
+    },
+  },
+  {
+    Name: "Assembly Line",
+    Head: {
+      machine: {
+        machine_id: "3",
+        name: "Conveyor",
+        sensors: { speed: 1.5 },
+        dependencies: ["4"],
+        manufacturer: "Bosch",
+        prediction_status: true,
+      },
+    },
+  },
+  {
+    Name: "Cooling Process",
+    Head: {
+      machine: {
+        machine_id: "4",
+        name: "Cooling System",
+        sensors: { temperature: 20 },
+        dependencies: [],
+        manufacturer: "GE",
+        prediction_status: true,
+      },
+    },
+  },
 ];
 
-// Machines (Grouped Under Sections)
-const initialMachines: Machine[] = [
-  {
-    machine_id: "1",
-    name: "Boiler",
-    sensors: { temperature: 100, pressure: 1.2, vibration: 0.5 },
-    section: "heating",
-    dependencies: ["2"],
-    manufacturer: "Siemens",
-    prediction_status: true,
-  },
-  {
-    machine_id: "2",
-    name: "Pump",
-    sensors: { pressure: 2.0 },
-    section: "pumps",
-    dependencies: ["3"],
-    manufacturer: "ABB",
-    prediction_status: true,
-  },
-  {
-    machine_id: "3",
-    name: "Conveyor",
-    sensors: { speed: 1.5 },
-    section: "assembly",
-    dependencies: ["4"],
-    manufacturer: "Bosch",
-    prediction_status: true,
-  },
-  {
-    machine_id: "4",
-    name: "Cooling System",
-    sensors: { temperature: 20 },
-    section: "cooling",
-    dependencies: [],
-    manufacturer: "GE",
-    prediction_status: true,
-  },
-];
-
-// Define custom node types (Machine & Group)
 const nodeTypes: NodeTypes = {
   machine: MachineCard,
-  section: ({ data }: { data: { label: string } }) => (
+  flow: ({ data }: { data: { label: string } }) => (
     <div
       style={{
         width: "100%",
@@ -86,52 +93,60 @@ const nodeTypes: NodeTypes = {
 };
 
 const MachineGrid: React.FC = () => {
-  const [machines, setMachines] = useState<Machine[]>(initialMachines);
+  const [flows, setFlows] = useState<FlowData[]>(factoryFlow);
   const [edges, setEdges] = useState<Edge[]>(
-    initialMachines.flatMap((machine) =>
-      machine.dependencies.map((target) => ({
-        id: `edge-${machine.machine_id}-${target}`,
-        source: machine.machine_id,
+    factoryFlow.flatMap((flow) =>
+      flow.Head.machine.dependencies.map((target) => ({
+        id: `edge-${flow.Head.machine.machine_id}-${target}`,
+        source: flow.Head.machine.machine_id,
         target: target,
         animated: true,
-        style: { strokeWidth: 5, stroke: "black" }, // Bolder connection arrows
+        style: { strokeWidth: 5, stroke: "black" },
         markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14 },
       }))
     )
   );
 
-  // Generate section (group) nodes dynamically
-  const sectionNodes: Node[] = sections.map((section, index) => ({
-    id: `section-${section.id}`,
+  // Generate Flow Nodes (Group Nodes)
+  const flowNodes: Node[] = flows.map((flow, index) => ({
+    id: `flow-${flow.Name}`,
     position: { x: index * 500, y: 50 },
-    data: { label: section.label },
-    type: "section",
+    data: { label: flow.Name },
+    type: "flow",
   }));
 
-  // Generate machine nodes dynamically
-  const machineNodes: Node<MachineNodeData>[] = machines.map((machine, index) => ({
-    id: machine.machine_id,
-    position: { x: (index % 2) * 250 + 50, y: 200 },
-    parentId: `section-${machine.section}`, // Assign to section (group)
-    draggable: true, // Ensures nodes can be moved
+  // Generate Machine Nodes
+  const machineNodes: Node[] = flows.map((flow, index) => ({
+    id: flow.Head.machine.machine_id,
+    position: { x: index * 250 + 50, y: 200 },
+    parentId: `flow-${flow.Name}`,
+    draggable: true,
     data: {
-      name: machine.name,
-      sensors: machine.sensors,
-      failed: !machine.prediction_status,
+      name: flow.Head.machine.name,
+      sensors: flow.Head.machine.sensors,
+      failed: !flow.Head.machine.prediction_status,
     },
     type: "machine",
   }));
 
-  const nodes = [...sectionNodes, ...machineNodes];
+  const nodes = [...flowNodes, ...machineNodes];
 
   // Handle Node Dragging
   const onNodesChange = useCallback((changes: NodeChange[]) => {
-    setMachines((prevMachines) =>
-      prevMachines.map((machine) => {
-        const updatedNode = changes.find((change) => "id" in change && change.id === machine.machine_id);
+    setFlows((prevFlows) =>
+      prevFlows.map((flow) => {
+        const updatedNode = changes.find((change) => "id" in change && change.id === flow.Head.machine.machine_id);
         return updatedNode && "position" in updatedNode
-          ? { ...machine, position: updatedNode.position || { x: 0, y: 0 } }
-          : machine;
+          ? {
+              ...flow,
+              Head: {
+                machine: {
+                  ...flow.Head.machine,
+                  position: updatedNode.position || { x: 0, y: 0 },
+                },
+              },
+            }
+          : flow;
       })
     );
   }, []);
@@ -140,7 +155,6 @@ const MachineGrid: React.FC = () => {
     setEdges((prevEdges) => applyEdgeChanges(changes, prevEdges));
   }, []);
 
-  // Ensure One Connection Per Machine
   const onConnect = useCallback((connection: Connection) => {
     setEdges((prevEdges) => {
       const isExisting = prevEdges.some((edge) => edge.source === connection.source);
@@ -149,11 +163,11 @@ const MachineGrid: React.FC = () => {
   }, []);
 
   const failMachine = (id: string) => {
-    setMachines((prevMachines) =>
-      prevMachines.map((machine) =>
-        machine.machine_id === id
-          ? { ...machine, prediction_status: false }
-          : machine
+    setFlows((prevFlows) =>
+      prevFlows.map((flow) =>
+        flow.Head.machine.machine_id === id
+          ? { ...flow, Head: { machine: { ...flow.Head.machine, prediction_status: false } } }
+          : flow
       )
     );
   };
@@ -170,7 +184,7 @@ const MachineGrid: React.FC = () => {
         onConnect={onConnect}
         fitView
         panOnDrag
-        zoomOnScroll={false} // Disables zooming
+        zoomOnScroll={false}
       >
         <Background color="#333" />
         <MiniMap pannable zoomable nodeStrokeWidth={3} nodeColor="green" />

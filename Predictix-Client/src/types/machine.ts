@@ -2,7 +2,6 @@ export interface Machine {
   machine_id: string;
   name: string;
   sensors: Record<string, number>;
-  section: string;
   dependencies: string[];
   manufacturer: string;
   down_time?: number;
@@ -12,7 +11,7 @@ export interface Machine {
   prediction_status: boolean;
 }
 export interface MachineNode {
-  machinde: Machine;
+  machine: Machine;
   dependencies: MachineNode[];
 }
 export interface FlowData {
