@@ -129,9 +129,9 @@ def get_edges(request, factory_id):
             {
                 "id": edge.id,
                 "factory_id": edge.factory.id,  
-                "head": f"{edge.head.machine_id:02}",
-                "source": f"{edge.source.machine_id:02}",
-                "target": f"{edge.target.machine_id:02}"
+                "head": f"{edge.head.machine_id}",
+                "source": f"{edge.source.machine_id}",
+                "target": f"{edge.target.machine_id}"
             }
             for edge in edges
         ]
