@@ -128,10 +128,10 @@ def get_edges(request, factory_id):
         edges_data = [
             {
                 "id": edge.id,
-                "factory_id": edge.factory.id,  # Return integer factory ID
-                "head": f"M{edge.head.machine_id:03}",
-                "source": f"M{edge.source.machine_id:03}",
-                "target": f"M{edge.target.machine_id:03}"
+                "factory_id": edge.factory.id,  
+                "head": f"{edge.head.machine_id:02}",
+                "source": f"{edge.source.machine_id:02}",
+                "target": f"{edge.target.machine_id:02}"
             }
             for edge in edges
         ]
@@ -140,3 +140,33 @@ def get_edges(request, factory_id):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+    
+
+# def get_flows_by_factory(request, factory_id):
+#     """
+#     Retrieve all flows (edges) grouped by head machine for a given factory.
+#     """
+#     try:
+#         # Get the factory
+#         factory = get_object_or_404(Factory, id=factory_id)
+
+#         # Fetch all edges related to this factory
+#         edges = Edge.objects.filter(factory=factory).select_related("head", "source", "target")
+
+#         # Group edges by head machine
+#         flows = {}
+#         for edge in edges:
+#             head_id = f"M{edge.head.machine_id:03}"
+            
+#             if head_id not in flows:
+#                 flows[head_id] = []
+
+#             flows[head_id].append({
+#                 "source": f"M{edge.source.machine_id:03}",
+#                 "target": f"M{edge.target.machine_id:03}"
+#             })
+
+#         return JsonResponse({"factory_id": factory.id, "flows": flows}, safe=False, status=200)
+
+#     except Exception as e:
+#         return JsonResponse({"error": str(e)}, status=500)
