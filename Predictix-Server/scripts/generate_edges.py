@@ -46,6 +46,7 @@ def get_machine_by_id(factory, machine_id):
 def generate_edges_for_factory(factory_id):
     """
     Allows the user to create edges interactively for a given factory using `machine_id`.
+    Allows head and source to be the same machine.
     """
     try:
         # Fetch the factory
@@ -65,7 +66,7 @@ def generate_edges_for_factory(factory_id):
                     print("👋 Exiting edge creation.")
                     break
 
-                source_id = input("Enter Source Machine ID: ").strip()
+                source_id = input("Enter Source Machine ID (can be the same as Head): ").strip()
                 if source_id.lower() == "exit":
                     print("👋 Exiting edge creation.")
                     break
@@ -94,9 +95,9 @@ def generate_edges_for_factory(factory_id):
                     print("❌ One or more machine IDs were not found in this factory. Try again.")
                     continue
 
-                # Ensure all three machines are different
-                if head == source or source == target or head == target:
-                    print("⚠️ Machines must be different! Please try again.")
+                # Ensure Source & Head can be the same, but Target must be unique
+                if source == target:
+                    print("⚠️ Source and Target must be different! Try again.")
                     continue
 
                 # Check if edge already exists
