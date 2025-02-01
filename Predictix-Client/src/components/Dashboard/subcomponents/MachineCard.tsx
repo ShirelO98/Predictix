@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import { Handle, Position } from "reactflow";
 import { Machine } from "../../../types/machine"; 
@@ -29,13 +29,6 @@ const MachineCard: React.FC<MachineCardProps> = ({ data: machine }) => {
         <Typography variant="body2" sx={{ color: "gray" }}>
           {machine.manufacturer}
         </Typography>
-        <Box sx={{ textAlign: "left", mt: 1 }}>
-          {Object.entries(machine.sensors).map(([key, value]) => (
-            <Typography key={key} variant="body2" sx={{ fontWeight: "bold" }}>
-              {key.replace(/_/g, " ").toUpperCase()}: {value}
-            </Typography>
-          ))}
-        </Box>
       </CardContent>
       <Handle type="target" position={Position.Right} />
       <Handle type="source" position={Position.Left} />

@@ -1,3 +1,4 @@
+import { Edge } from "reactflow";
 
 export interface Machine {
   machine_id: string;
@@ -9,6 +10,15 @@ export interface Machine {
   next_maintenance_date?: Date;
   up_time?: number;
   prediction_status: boolean;
+}
+
+export interface FlowHead {
+  id: string;
+  y?: number;
+}
+
+export interface EdgeWithHead extends Edge {
+  head: string;
 }
 
 export interface MachineSensors {
