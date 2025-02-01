@@ -1,15 +1,13 @@
 import React from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import { Handle, Position } from "reactflow";
-import { MachineNode } from "../../../types/machine"; 
+import { Machine } from "../../../types/machine"; 
 
 interface MachineCardProps {
-  data: MachineNode;
+  data: Machine;
 }
 
-const MachineCard: React.FC<MachineCardProps> = ({ data }) => {
-  const { machine } = data;
-
+const MachineCard: React.FC<MachineCardProps> = ({ data: machine }) => {
   return (
     <Card
       sx={{
@@ -39,8 +37,8 @@ const MachineCard: React.FC<MachineCardProps> = ({ data }) => {
           ))}
         </Box>
       </CardContent>
-      <Handle type="target" position={Position.Top} />
-      <Handle type="source" position={Position.Bottom} />
+      <Handle type="target" position={Position.Right} />
+      <Handle type="source" position={Position.Left} />
     </Card>
   );
 };

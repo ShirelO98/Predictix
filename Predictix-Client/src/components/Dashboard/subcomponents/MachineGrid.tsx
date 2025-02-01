@@ -1,178 +1,196 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import ReactFlow, {
   Background,
   Controls,
   MiniMap,
-  applyEdgeChanges,
-  addEdge,
   Node,
   Edge,
-  Connection,
-  NodeChange,
-  EdgeChange,
   NodeTypes,
-  MarkerType,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import MachineCard from "./MachineCard";
-import { FlowData, MachineNode } from "../../../types/machine";
+import { Machine } from "../../../types/machine";
+import axios from "axios";
 
-
-const factoryFlows: FlowData[] = [
+const machinesData: Node<Machine>[] = [
   {
-    Name: "Heating Process",
-    Head: {
-      machine: {
-        machine_id: "1",
-        name: "Boiler",
-        sensors: { temperature: 100, pressure: 1.2, vibration: 0.5 },
-        manufacturer: "Siemens",
-        prediction_status: true,
-      },
-      position: { x: 50, y: 200 }, // ✅ Added position
-      next: {
-        machine: {
-          machine_id: "2",
-          name: "Pump",
-          sensors: { pressure: 2.0 },
-          manufacturer: "ABB",
-          prediction_status: true,
-        },
-        position: { x: 300, y: 200 }, // ✅ Added position
-        next: null, // ✅ Works now
-        critical: false,
-      },
-      critical: true,
+    id: "1",
+    type: "machine",
+    position: { x: 100, y: 100 },
+    data: {
+      machine_id: "1",
+      name: "Machine 1",
+      sensors: {},
+      manufacturer: "A",
+      prediction_status: true,
+    },
+  },
+  {
+    id: "2",
+    type: "machine",
+    position: { x: 100, y: 100 },
+    data: {
+      machine_id: "2",
+      name: "Machine 2",
+      sensors: {},
+      manufacturer: "A",
+      prediction_status: true,
+    },
+  },
+  {
+    id: "3",
+    type: "machine",
+    position: { x: 100, y: 100 },
+    data: {
+      machine_id: "3",
+      name: "Machine 3",
+      sensors: {},
+      manufacturer: "B",
+      prediction_status: true,
+    },
+  },
+  {
+    id: "4",
+    type: "machine",
+    position: { x: 100, y: 100 },
+    data: {
+      machine_id: "4",
+      name: "Machine 4",
+      sensors: {},
+      manufacturer: "B",
+      prediction_status: true,
+    },
+  },
+  {
+    id: "5",
+    type: "machine",
+    position: { x: 100, y: 100 },
+    data: {
+      machine_id: "5",
+      name: "Machine 5",
+      sensors: {},
+      manufacturer: "C",
+      prediction_status: true,
+    },
+  },
+  {
+    id: "6",
+    type: "machine",
+    position: { x: 100, y: 100 },
+    data: {
+      machine_id: "6",
+      name: "Machine 6",
+      sensors: {},
+      manufacturer: "C",
+      prediction_status: true,
+    },
+  },
+  {
+    id: "7",
+    type: "machine",
+    position: { x: 100, y: 100 },
+    data: {
+      machine_id: "7",
+      name: "Machine 7",
+      sensors: {},
+      manufacturer: "D",
+      prediction_status: true,
+    },
+  },
+  {
+    id: "8",
+    type: "machine",
+    position: { x: 100, y: 100 },
+    data: {
+      machine_id: "8",
+      name: "Machine 8",
+      sensors: {},
+      manufacturer: "E",
+      prediction_status: true,
+    },
+  },
+  {
+    id: "9",
+    type: "machine",
+    position: { x: 100, y: 100 },
+    data: {
+      machine_id: "9",
+      name: "Machine 9",
+      sensors: {},
+      manufacturer: "F",
+      prediction_status: true,
     },
   },
 ];
 
-// **Custom Node Types**
-const nodeTypes: NodeTypes = {
+const edgesData: Edge[] = [
+  { id: "e1-2", source: "1", target: "2", animated: true },
+  { id: "e3-4", source: "3", target: "4", animated: true },
+  { id: "e5-6", source: "5", target: "6", animated: true },
+  { id: "e2-7", source: "2", target: "7", animated: true },
+  { id: "e4-7", source: "4", target: "7", animated: true },
+  { id: "e6-7", source: "6", target: "7", animated: true },
+  { id: "e7-8", source: "7", target: "8", animated: true },
+  { id: "e8-9", source: "8", target: "9", animated: true },
+];
+
+const calculateDistanceFromHead = (machine_id: string, head_ids: string[], edges: Edge[], distance = 1): { distance: number, head_id: string } => {
+  if (head_ids.includes(machine_id)) return {distance, head_id: machine_id};
+  const relevant_edges = edges.filter((edge) => edge.target === machine_id);
+  let machine_heads = relevant_edges.map((edge) => calculateDistanceFromHead(edge.source, head_ids, edges, distance + 1));
+  machine_heads = machine_heads.sort((a, b) => a.distance - b.distance);
+  return machine_heads[0];
+}
+
+interface FlowHead {
+  id: string;
+  y?: number;
+}
+
+const setMachinesPosition = (machines: Node<Machine>[], edges: Edge[]) => {
+  const x_offset = 400;
+  const y_offset = 400;
+
+  const flow_head_ids: FlowHead[] = machines.filter((machine) =>
+    edges.filter((edge) => edge.target === machine.id).length === 0
+  ).map((machine, index) => ({ id: machine.id, y: y_offset * index }));
+  return machines.map((machine) => {
+    const { distance, head_id } = calculateDistanceFromHead(machine.id, flow_head_ids.map((flow_head) => flow_head.id), edges);
+    const head = flow_head_ids.find((flow_head) => flow_head.id === head_id);
+    machine.position = { x: x_offset * distance, y: head?.y || 0 };
+    return machine;
+  });
+};
+
+const machineCardTypes: NodeTypes = {
   machine: MachineCard,
-  flow: ({ data }: { data: { label: string } }) => (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(0, 255, 0, 0.1)",
-        border: "2px solid green",
-        textAlign: "center",
-        fontWeight: "bold",
-        padding: "10px",
-      }}
-    >
-      {data.label}
-    </div>
-  ),
-};
-
-// **Extract Edges from `next`**
-const extractEdges = (node: MachineNode | null, edges: Edge[] = []): Edge[] => {
-  if (!node || node.next === null) return edges;
-  edges.push({
-    id: `edge-${node.machine.machine_id}-${node.next.machine.machine_id}`,
-    source: node.machine.machine_id,
-    target: node.next.machine.machine_id,
-    animated: true,
-    style: { strokeWidth: 5, stroke: "black" },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14 },
-  });
-  return extractEdges(node.next, edges);
-};
-
-// **Extract Nodes from `next`**
-const extractNodes = (node: MachineNode | null, nodes: Node[] = [], xOffset = 0): Node[] => {
-  if (!node) return nodes;
-  nodes.push({
-    id: node.machine.machine_id,
-    position: { x: xOffset, y: 200 },
-    draggable: true,
-    data: {
-      name: node.machine.name,
-      sensors: node.machine.sensors,
-      failed: !node.machine.prediction_status,
-    },
-    type: "machine",
-  });
-  return extractNodes(node.next, nodes, xOffset + 250);
 };
 
 const MachineGrid: React.FC = () => {
-  const [flows, setFlows] = useState<FlowData[]>(factoryFlows);
-  const [edges, setEdges] = useState<Edge[]>(flows.flatMap((flow) => extractEdges(flow.Head)));
+  const [edges, setEdges] = useState<Edge[]>([]);
+  const [machines, setMachines] = useState<Node<Machine>[]>([]);
 
-  // Generate Flow Nodes (Group Nodes)
-  const flowNodes: Node[] = flows.map((flow, index) => ({
-    id: `flow-${flow.Name}`,
-    position: { x: index * 500, y: 50 },
-    data: { label: flow.Name },
-    type: "flow",
-  }));
-
-  // Generate Machine Nodes Dynamically
-  const machineNodes: Node[] = flows.flatMap((flow) => extractNodes(flow.Head));
-
-  const nodes = [...flowNodes, ...machineNodes];
-
-  // **Recursive Function to Update Machine Position**
-  const updateMachinePosition = (node: MachineNode | null, updatedNode: NodeChange): MachineNode | null => {
-    if (!node) return node;
-  
-    // Ensure `updatedNode` is a position change
-    if (updatedNode.type === "position" && "id" in updatedNode && updatedNode.id === node.machine.machine_id) {
-      const positionChange = updatedNode as { position?: { x: number; y: number } }; // Type assertion
-      return {
-        ...node,
-        position: positionChange.position ? positionChange.position : { x: 0, y: 0 }, // ✅ Safe position handling
-      };
-    }
-  
-    // **Recursively update `next` if it's not null**
-    return {
-      ...node,
-      next: node.next !== null ? updateMachinePosition(node.next, updatedNode) : null,
-    };
-  };
-  
-
-  // **Handle Node Dragging**
-  const onNodesChange = useCallback((changes: NodeChange[]) => {
-    setFlows((prevFlows) =>
-      prevFlows.map((flow) => {
-        // Find the first change that has `id` and is a position change
-        const updatedNode = changes.find((change) => change.type === "position" && "id" in change);
-        if (!updatedNode) return flow; // Skip if no valid update
-
-        return {
-          ...flow,
-          Head: updateMachinePosition(flow.Head, updatedNode)!,
-        };
-      })
-    );
-  }, []);
-
-  const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-    setEdges((prevEdges) => applyEdgeChanges(changes, prevEdges));
-  }, []);
-
-  const onConnect = useCallback((connection: Connection) => {
-    setEdges((prevEdges) => addEdge(connection, prevEdges));
+  useEffect(() => {
+    setMachines(setMachinesPosition(machinesData, edgesData));
+    setEdges(edgesData);
+    // axios.get("http://localhost:5000/machines").then((response) => {
+    //   setMachines(response.data);
+    // });
+    // axios.get("http://localhost:5000/edges").then((response) => {
+    //   setEdges(response.data);
+    // }
   }, []);
 
   return (
     <div style={{ width: "100vw", height: "90vh" }}>
       <h2 style={{ textAlign: "center", marginBottom: "10px" }}>Factory Grid</h2>
       <ReactFlow
-        nodes={nodes}
+        nodes={machines}
         edges={edges}
-        nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
+        nodeTypes={machineCardTypes}
         fitView
         panOnDrag
-        zoomOnScroll={false} // **Prevents zooming**
+        zoomOnScroll={false}
       >
         <Background color="#333" />
         <MiniMap pannable zoomable nodeStrokeWidth={3} nodeColor="green" />
