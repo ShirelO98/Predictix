@@ -12,15 +12,52 @@ django.setup()
 
 from predictixApp.models import Factory, Machine, Edge
 
-def generate_edges_for_factory(factory_id):
+def list_unused_machines(factory):
+    """
+    Lists all machines in the given factory that are **not** used in any edges.
+    """
+    used_machine_ids = set(
+        Edge.objects.filter(factory=factory).values_list("head__machine_id", flat=True)
+    ) | set(
+        Edge.objects.filter(factory=factory).values_list("source__machine_id", flat=True)
+    ) | set(
+        Edge.objects.filter(factory=factory).values_list("target__machine_id", flat=True)
+    )
+
+    all_machines = factory.machines.all()
+    unused_machines = [m for m in all_machines if m.machine_id not in used_machine_ids]
+
+    if not unused_machines:
+        print(f"⚠️ No unused machines found in Factory {factory.name} ({factory.id})")
+    else:
+        print("\n🔹 Available Machines (Not Used in Any Edges):")
+        for machine in unused_machines:
+            print(f"  - Machine ID: {machine.machine_id}")
+
+def get_machine_by_id(factory, machine_id):
+    """
+    Retrieves a machine by its `machine_id` within the specified factory.
+    """
     try:
-        # Fetch the factory once
-        factory = Factory.objects.get(factory_id=factory_id)
-        print(f"\n🔹 Generating edges for Factory: {factory.name} ({factory.factory_id})")
+        return factory.machines.get(machine_id=machine_id)
+    except Machine.DoesNotExist:
+        return None
+
+def generate_edges_for_factory(factory_id):
+    """
+    Allows the user to create edges interactively for a given factory using `machine_id`.
+    """
+    try:
+        # Fetch the factory
+        factory = Factory.objects.get(id=factory_id)
+        print(f"\n🔹 Selected Factory: {factory.name} ({factory.id})")
 
         while True:
             try:
-                print("\n➡ Enter machine IDs for a new edge (or type 'exit' to quit):")
+                # List machines that haven't been used in any edges
+                list_unused_machines(factory)
+
+                print("\n➡ Enter machine IDs for a new edge (or type 'exit' to quit'):")
 
                 # Get Machine IDs from user input
                 head_id = input("Enter Head Machine ID: ").strip()
@@ -38,28 +75,42 @@ def generate_edges_for_factory(factory_id):
                     print("👋 Exiting edge creation.")
                     break
 
-                # Fetch Machines based on machine_id
-                head = Machine.objects.get(machine_id=head_id)
-                source = Machine.objects.get(machine_id=source_id)
-                target = Machine.objects.get(machine_id=target_id)
+                # Convert input to integers
+                try:
+                    head_id = int(head_id)
+                    source_id = int(source_id)
+                    target_id = int(target_id)
+                except ValueError:
+                    print("❌ Invalid input! Machine IDs must be numbers.")
+                    continue
+
+                # Fetch Machines within the selected factory using machine_id
+                head = get_machine_by_id(factory, head_id)
+                source = get_machine_by_id(factory, source_id)
+                target = get_machine_by_id(factory, target_id)
+
+                # Ensure machines exist
+                if not head or not source or not target:
+                    print("❌ One or more machine IDs were not found in this factory. Try again.")
+                    continue
 
                 # Ensure all three machines are different
                 if head == source or source == target or head == target:
                     print("⚠️ Machines must be different! Please try again.")
                     continue
 
+                # Check if edge already exists
+                if Edge.objects.filter(factory=factory, head=head, source=source, target=target).exists():
+                    print("⚠️ Edge already exists! Try a different combination.")
+                    continue
+
                 # Create the Edge
-                edge, created = Edge.objects.get_or_create(
-                    factory=factory, head=head, source=source, target=target
-                )
+                Edge.objects.create(factory=factory, head=head, source=source, target=target)
 
-                if created:
-                    print(f"✅ Successfully created Edge: M{head.machine_id:03} -> M{source.machine_id:03} -> M{target.machine_id:03}")
-                else:
-                    print("⚠️ Edge already exists!")
+                print(f"✅ Successfully created Edge: M{head.machine_id:03} -> M{source.machine_id:03} -> M{target.machine_id:03}")
 
-            except Machine.DoesNotExist:
-                print("❌ One or more Machine IDs were not found. Try again.")
+            except ValueError:
+                print("❌ Invalid input! Please enter a valid machine ID as a number.")
 
             except Exception as e:
                 print(f"❌ Error: {e}")
@@ -70,4 +121,8 @@ def generate_edges_for_factory(factory_id):
 # Run the script
 if __name__ == "__main__":
     factory_id = input("Enter Factory ID: ").strip()
-    generate_edges_for_factory(factory_id)
+    try:
+        factory_id = int(factory_id)
+        generate_edges_for_factory(factory_id)
+    except ValueError:
+        print("❌ Invalid Factory ID! Please enter a valid number.")

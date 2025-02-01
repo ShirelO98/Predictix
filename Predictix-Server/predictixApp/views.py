@@ -116,14 +116,14 @@ def update_thresholds(request, machine_id):
 
 def get_edges(request, factory_id):
     """
-    Retrieve edges for a specific factory.
+    Retrieve edges for a specific factory in reverse order.
     """
     try:
         # Get the factory by integer ID
         factory = get_object_or_404(Factory, id=factory_id)
         
-        # Fetch edges related to this factory
-        edges = Edge.objects.filter(factory=factory).select_related("head", "source", "target")
+        # Fetch edges related to this factory and reverse order
+        edges = Edge.objects.filter(factory=factory).select_related("head", "source", "target").order_by("-id")
 
         edges_data = [
             {
