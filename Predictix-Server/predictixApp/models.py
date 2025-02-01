@@ -71,3 +71,20 @@ class MachineThreshold(models.Model):
 
     def __str__(self):
         return f"Thresholds for {self.machine.name}"
+
+class Edge(models.Model):
+    factory = models.ForeignKey(
+        "Factory", on_delete=models.CASCADE, related_name="edges"
+    )
+    head = models.ForeignKey(
+        "Machine", on_delete=models.CASCADE, related_name="edges_as_head"
+    )
+    source = models.ForeignKey(
+        "Machine", on_delete=models.CASCADE, related_name="edges_as_source"
+    )
+    target = models.ForeignKey(
+        "Machine", on_delete=models.CASCADE, related_name="edges_as_target"
+    )
+
+    def __str__(self):
+        return f"Factory {self.factory.name}: {self.head.name} -> {self.source.name} -> {self.target.name}"

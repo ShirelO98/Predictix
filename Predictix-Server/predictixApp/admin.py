@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import MachineHistory
-from .models import Factory, Machine, MachineThreshold
+from .models import Factory, Machine, MachineThreshold, Edge
 
 @admin.register(MachineHistory)
 class MachineHistoryAdmin(admin.ModelAdmin):
@@ -33,3 +33,8 @@ class MachineThresholdAdmin(admin.ModelAdmin):
         "humidity_threshold",
         "noise_level_threshold",
     )
+
+@admin.register(Edge)
+class EdgeAdmin(admin.ModelAdmin):
+    list_display = ("factory", "head", "source", "target")
+    search_fields = ("factory__name", "head__name", "source__name", "target__name")

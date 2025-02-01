@@ -4,7 +4,7 @@ from django.http import JsonResponse
 import joblib
 from django.db.models import Sum
 from datetime import datetime, timedelta
-from predictixApp.models import Machine, Factory, MachineThreshold
+from predictixApp.models import Machine, Factory, MachineThreshold, Edge
 from django.shortcuts import get_object_or_404
 from ml.update_predictions import update_prediction_status
 from django.views.decorators.csrf import csrf_exempt
@@ -112,3 +112,31 @@ def update_thresholds(request, machine_id):
             return JsonResponse({"error": str(e)}, status=400)
 
     return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+
+
+def get_edges(request, factory_id):
+    """
+    Retrieve edges for a specific factory in reverse order.
+    """
+    try:
+        # Get the factory by integer ID
+        factory = get_object_or_404(Factory, id=factory_id)
+        
+        # Fetch edges related to this factory and reverse order
+        edges = Edge.objects.filter(factory=factory).select_related("head", "source", "target").order_by("-id")
+
+        edges_data = [
+            {
+                "id": edge.id,
+                "factory_id": edge.factory.id,  # Return integer factory ID
+                "head": f"M{edge.head.machine_id:03}",
+                "source": f"M{edge.source.machine_id:03}",
+                "target": f"M{edge.target.machine_id:03}"
+            }
+            for edge in edges
+        ]
+
+        return JsonResponse({"edges": edges_data}, safe=False, status=200)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

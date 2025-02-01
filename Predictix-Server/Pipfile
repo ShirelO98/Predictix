@@ -16,6 +16,7 @@ tk = "*"
 celery = {extras = ["redis"], version = "*"}
 django-celery-beat = "*"
 schedule = "*"
+networkx = "*"
 
 [dev-packages]
 
