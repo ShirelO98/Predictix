@@ -124,15 +124,15 @@ import { SERVER_ADDRESS } from "../../../../constants";
 //   },
 // ];
 
-// const edgesData: Edge[] = [
-//   { id: "e1-2", source: "1", target: "2", animated: true },
-//   { id: "e3-4", source: "3", target: "4", animated: true },
-//   { id: "e5-6", source: "5", target: "6", animated: true },
-//   { id: "e2-7", source: "2", target: "7", animated: true },
-//   { id: "e4-7", source: "4", target: "7", animated: true },
-//   { id: "e6-7", source: "6", target: "7", animated: true },
-//   { id: "e7-8", source: "7", target: "8", animated: true },
-//   { id: "e8-9", source: "8", target: "9", animated: true },
+// const edgesData: EdgeWithHead[] = [
+//   { id: "e1-2", head: "1", source: "1", target: "2", animated: true },
+//   { id: "e3-4", head: "3", source: "3", target: "4", animated: true },
+//   { id: "e5-6", head: "5", source: "5", target: "6", animated: true },
+//   { id: "e2-7", head: "1", source: "2", target: "7", animated: true },
+//   { id: "e4-7", head: "3", source: "4", target: "7", animated: true },
+//   { id: "e6-7", head: "5", source: "6", target: "7", animated: true },
+//   { id: "e7-8", head: "1", source: "7", target: "8", animated: true },
+//   { id: "e8-9", head: "1", source: "8", target: "9", animated: true },
 // ];
 
 const calculateDistanceFromHead = (machine_id: string, head_ids: string[], edges: Edge[], distance = 1): { distance: number, head_id: string } => {

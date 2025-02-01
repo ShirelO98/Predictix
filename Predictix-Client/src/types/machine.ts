@@ -17,13 +17,12 @@ export interface FlowHead {
   y?: number;
 }
 
-export interface EdgeWithHead extends Edge {
+export type EdgeWithHead = Edge & {
   head: string;
-}
+};
 
 export interface MachineSensors {
   machine_id: string;
   machine_name: string;
   sensors: Record<string, { value: number; threshold: number }>;
 }
-
