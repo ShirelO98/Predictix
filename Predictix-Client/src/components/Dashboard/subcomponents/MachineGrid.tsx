@@ -41,7 +41,7 @@ const calculateDistanceFromHead = (
     .map((edge) =>
       calculateDistanceFromHead(edge.source.toString(), head_ids, edges, distance + 1)
     )
-    .filter((result) => result !== undefined);
+    edges.filter(({ id, source, target }) => id && source&&target)
 
   if (machine_heads.length === 0) {
     console.warn(` No valid heads found for machine_id: ${machine_id}`);
