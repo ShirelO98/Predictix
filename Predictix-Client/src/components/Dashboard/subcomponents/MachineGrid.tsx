@@ -131,6 +131,7 @@ const parseEdges = ({ edges }: { edges: EdgeWithHead[] }): Edge[] => {
       animated: true,
       type: "smoothstep",
       head: edge.head, 
+      style: { strokeWidth: 6 },
     }));
 };
 
