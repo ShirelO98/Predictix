@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from "react";
+mport React, { useState, useEffect } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -9,11 +8,10 @@ import ReactFlow, {
   NodeTypes,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import MachineCard from "./MachineCard";
+import { EdgeWithHead, FlowHead, Machine } from "../../../types/machine";
 import axios from "axios";
-import MachineCard from "./MachineCard"; 
 import { SERVER_ADDRESS } from "../../../../constants";
-import { Machine, EdgeWithHead, FlowHead } from "../../../types/machine";
-
 
 const calculateDistanceFromHead = (
   machine_id: string,
@@ -21,30 +19,26 @@ const calculateDistanceFromHead = (
   edges: Edge[],
   distance = 1
 ): { distance: number; head_id: string } => {
-  machine_id = machine_id.toString();
-  head_ids = head_ids.map((id) => id.toString());
+  machine_id = machine_id.toString(); // Ensure IDs are always strings
+  head_ids = head_ids.map(id => id.toString()); 
 
   if (head_ids.includes(machine_id)) {
     return { distance, head_id: machine_id };
   }
 
-  const relevant_edges = edges.filter(
-    (edge) => edge.target.toString() === machine_id
-  );
+  const relevant_edges = edges.filter((edge) => edge.target.toString() === machine_id);
 
   if (relevant_edges.length === 0) {
-    console.warn(`No edges found for machine_id: ${machine_id}`);
+    console.warn(⚠️ No edges found for machine_id: ${machine_id});
     return { distance: Infinity, head_id: "" };
   }
 
-  const machine_heads = relevant_edges
-    .map((edge) =>
-      calculateDistanceFromHead(edge.source.toString(), head_ids, edges, distance + 1)
-    )
-    .filter((result) => result !== undefined);
+  let machine_heads = relevant_edges
+    .map((edge) => calculateDistanceFromHead(edge.source.toString(), head_ids, edges, distance + 1))
+    .filter(Boolean);
 
   if (machine_heads.length === 0) {
-    console.warn(` No valid heads found for machine_id: ${machine_id}`);
+    console.warn(⚠️ No valid heads found for machine_id: ${machine_id});
     return { distance: Infinity, head_id: "" };
   }
 
@@ -52,30 +46,29 @@ const calculateDistanceFromHead = (
   return machine_heads[0];
 };
 
-const setMachinesPosition = (
-  machines: Node<Machine>[],
-  edges: EdgeWithHead[]
-): Node<Machine>[] => {
+const setMachinesPosition = (machines: Node<Machine>[], edges: EdgeWithHead[]): Node<Machine>[] => {
   if (!machines.length || !edges.length) {
-    console.warn(" No machines or edges found!");
+    console.warn("⚠️ No machines or edges found!");
     return machines;
   }
+
   const x_offset = 400; 
-  const y_offset = 300; 
-  const flow_head_ids: FlowHead[] = [
-    ...new Set(
-      edges
-        .filter((edge) => edge.head !== undefined && edge.head !== null)
-        .map((edge) => edge.head.toString())
-    ),
-  ].map((id, index) => ({ id, y: y_offset * (index + 1) }));
+  const y_offset = 300;
+
+
+  const flow_head_ids: FlowHead[] = [...new Set(
+    edges
+      .filter(edge => edge.head !== undefined && edge.head !== null)
+      .map((edge) => edge.head.toString())
+  )].map((id, index) => ({ id, y: y_offset * (index + 1) }));
 
   return machines.map((machine) => {
     if (!machine.id) {
-      console.warn(" Machine missing ID:", machine);
+      console.warn(⚠️ Machine missing ID:, machine);
       return { ...machine, position: { x: x_offset, y: y_offset } };
     }
 
+  
     const { distance, head_id } = calculateDistanceFromHead(
       machine.id.toString(),
       flow_head_ids.map((fh) => fh.id),
@@ -83,10 +76,12 @@ const setMachinesPosition = (
     );
 
     if (!head_id) {
-      console.warn(` No head_id found for machine ${machine.id}, using default.`);
+      console.warn(⚠️ No head_id found for machine ${machine.id}, using default.);
     }
 
-    const head = flow_head_ids.find((fh) => fh.id === head_id);
+    const head = flow_head_ids.find(flow_head => flow_head.id === head_id);
+
+
     const x = isNaN(distance) || !isFinite(distance) ? x_offset : x_offset * distance;
     const y = head?.y && isFinite(head.y) ? head.y : y_offset;
 
@@ -98,74 +93,75 @@ const setMachinesPosition = (
 };
 
 
-const nodeTypes: NodeTypes = {
+
+
+
+const machineCardTypes: NodeTypes = {
   machine: MachineCard,
 };
 
 const parseMachines = ({ machines }: { machines: Machine[] }): Node<Machine>[] => {
-  return machines.map((machine, index) => ({
-    id: machine.machine_id.toString(),
+  return machines.map((machine: Machine, index) => ({
+    id: machine.machine_id.toString(), 
     type: "machine",
     data: machine,
-    position: { x: 200 * (index % 5), y: 200 * Math.floor(index / 5) },
+    position: { x: 200 * (index % 5), y: 200 * Math.floor(index / 5) }, 
   }));
 };
 
 const parseEdges = ({ edges }: { edges: EdgeWithHead[] }): Edge[] => {
   if (!edges || !Array.isArray(edges)) {
-    console.error(" Edges data is invalid:", edges);
+    console.error("❌ Edges data is invalid:", edges);
     return [];
   }
+
   return edges
-    .filter(
-      (edge) =>
-        edge &&
-        edge.id !== undefined &&
-        edge.source !== undefined &&
-        edge.target !== undefined
-    )
+    .filter(edge => edge && edge.id !== undefined && edge.source !== undefined && edge.target !== undefined) 
     .map((edge) => ({
-      id: edge.id.toString(),
+      id: edge.id.toString(), 
       source: edge.source.toString(),
       target: edge.target.toString(),
-      animated: true,
+      animated: true, 
       type: "smoothstep",
-      head: edge.head, 
-      style: { strokeWidth: 6 },
     }));
 };
 
-
 const MachineGrid: React.FC = () => {
-const [edges, setEdges] = useState<Edge[]>([]);
-const [machines, setMachines] = useState<Node<Machine>[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+  const [machines, setMachines] = useState<Node<Machine>[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-      
-        const edgesResponse = await axios.get(`${SERVER_ADDRESS}/getAllEdges/1`);
+        const edgesResponse = await axios.get(${SERVER_ADDRESS}/getAllEdges/1);
+        
         const edgesData = parseEdges({ edges: edgesResponse.data.edges });
-        const machinesResponse = await axios.get(`${SERVER_ADDRESS}/getTaggedByFactory/1`);
+        
+
+        const machinesResponse = await axios.get(${SERVER_ADDRESS}/getTaggedByFactory/1);
+       
         const machinesData = parseMachines({ machines: machinesResponse.data.machines });
+
         const positionedMachines = setMachinesPosition(machinesData, edgesData as EdgeWithHead[]);
+ 
 
         setEdges(edgesData);
         setMachines(positionedMachines);
       } catch (error) {
-        console.error(" Error fetching data:", error);
+        console.error("❌ Error fetching data:", error);
       }
     };
+
     fetchData();
   }, []);
 
   return (
-    <div style={{ width: "100vw", height: "90vh" }}>
+    <div style={{ width: "100vw", height: "90vh", border: "1px solid red" }}>
       <h2 style={{ textAlign: "center", marginBottom: "10px" }}>Factory Grid</h2>
       <ReactFlow
         nodes={machines}
         edges={edges}
-        nodeTypes={nodeTypes}
+        nodeTypes={machineCardTypes}
         fitView
         panOnDrag
         zoomOnScroll={false}
@@ -178,4 +174,4 @@ const [machines, setMachines] = useState<Node<Machine>[]>([]);
   );
 };
 
-export default MachineGrid;
+export default MachineGrid

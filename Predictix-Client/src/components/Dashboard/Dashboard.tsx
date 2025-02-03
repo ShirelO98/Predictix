@@ -26,16 +26,6 @@ const NAVIGATION: Navigation = [
     title: "Alerts",
     icon: <NotificationImportantIcon color="secondary" />,
   },
-  {
-    segment: "reports",
-    title: "Reports",
-    icon: <BarChartIcon color="action" />,
-  },
-  {
-    segment: "machines",
-    title: "Machines",
-    icon: <BuildIcon color="disabled" />,
-  },
 ];
 
 export default function DashboardLayoutSidebarCollapsed() {
@@ -70,10 +60,7 @@ export default function DashboardLayoutSidebarCollapsed() {
       router={router}
     >
       <DashboardLayout defaultSidebarCollapsed>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: 2, py: 1 }}>
-          <LogoutButton />
-        </Box>
-        <Box sx={{ py: 4 }}>
+        <Box sx={{ py: 2, px: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <PageContent pathname={pathname} />
         </Box>
       </DashboardLayout>
