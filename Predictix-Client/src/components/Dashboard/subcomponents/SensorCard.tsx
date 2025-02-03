@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Typography, Box, Divider } from "@mui/material";
+import { Card, Typography, Box, Divider, useTheme } from "@mui/material";
 import { MachineSensors } from "../../../types/machine";
 import { Sensor } from "../../../types/Sensor";
 import SensorsThresholdButton from "./SensorsThresholdButton";
@@ -20,6 +20,7 @@ const transformToSensors = (machine: MachineSensors): Sensor[] =>
 const SensorCard: React.FC<SensorCardProps> = ({ machine }) => {
   const { machine_name } = machine;
   const [sensorsData, setSensorsData] = useState<Sensor[]>([]);
+  const theme = useTheme(); // Get the theme from MUI
 
   // Transform and set initial sensors data when machine changes
   useEffect(() => {
@@ -29,7 +30,7 @@ const SensorCard: React.FC<SensorCardProps> = ({ machine }) => {
 
   // Handle saving updated thresholds
   const handleSaveThresholds = (updatedSensors: Sensor[]) => {
-    setSensorsData(updatedSensors); // Update the sensors data
+    setSensorsData(updatedSensors);
   };
 
   // Get styles for each sensor's text based on its threshold
@@ -50,7 +51,8 @@ const SensorCard: React.FC<SensorCardProps> = ({ machine }) => {
         borderRadius: "8px",
         boxShadow: 3,
         marginBottom: "8px",
-        backgroundColor: "white", // Keep background color white
+        backgroundColor: theme.palette.mode === "dark" ? "#1E1E1E" : "white",
+        color: theme.palette.mode === "dark" ? "#FFFFFF" : "#000000",
       }}
     >
       {/* Machine Name */}
@@ -62,10 +64,10 @@ const SensorCard: React.FC<SensorCardProps> = ({ machine }) => {
       <SensorsThresholdButton
         sensors={sensorsData}
         onSaveThresholds={handleSaveThresholds}
-       machineID={machine.machine_id}
+        machineID={machine.machine_id}
       />
 
-      <Divider sx={{ my: 1 }} />
+      <Divider sx={{ my: 1, backgroundColor: theme.palette.mode === "dark" ? "#444" : "#ccc" }} />
 
       {/* Render Each Sensor */}
       <Box
@@ -80,7 +82,7 @@ const SensorCard: React.FC<SensorCardProps> = ({ machine }) => {
           <Box key={sensor.sensorName} sx={{ flex: "1 1 45%" }}>
             <Typography
               variant="body1"
-              sx={getSensorStyles(sensor)} // Apply dynamic styles
+              sx={getSensorStyles(sensor)}
             >
               {sensor.sensorName.charAt(0).toUpperCase() + sensor.sensorName.slice(1)}
               : {sensor.sensorValue.toFixed(2)} (Threshold: {sensor.thresholdValue})
