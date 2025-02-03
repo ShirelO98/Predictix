@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import ReactFlow, {
   Background,
@@ -8,204 +9,162 @@ import ReactFlow, {
   NodeTypes,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import MachineCard from "./MachineCard";
-import { EdgeWithHead, FlowHead, Machine } from "../../../types/machine";
 import axios from "axios";
+import MachineCard from "./MachineCard"; 
 import { SERVER_ADDRESS } from "../../../../constants";
+import { Machine, EdgeWithHead, FlowHead } from "../../../types/machine";
 
-// const machinesData: Node<Machine>[] = [
-//   {
-//     id: "1",
-//     type: "machine",
-//     position: { x: 100, y: 100 },
-//     data: {
-//       machine_id: "1",
-//       name: "Machine 1",
-//       sensors: {},
-//       manufacturer: "A",
-//       prediction_status: true,
-//     },
-//   },
-//   {
-//     id: "2",
-//     type: "machine",
-//     position: { x: 100, y: 100 },
-//     data: {
-//       machine_id: "2",
-//       name: "Machine 2",
-//       sensors: {},
-//       manufacturer: "A",
-//       prediction_status: true,
-//     },
-//   },
-//   {
-//     id: "3",
-//     type: "machine",
-//     position: { x: 100, y: 100 },
-//     data: {
-//       machine_id: "3",
-//       name: "Machine 3",
-//       sensors: {},
-//       manufacturer: "B",
-//       prediction_status: true,
-//     },
-//   },
-//   {
-//     id: "4",
-//     type: "machine",
-//     position: { x: 100, y: 100 },
-//     data: {
-//       machine_id: "4",
-//       name: "Machine 4",
-//       sensors: {},
-//       manufacturer: "B",
-//       prediction_status: true,
-//     },
-//   },
-//   {
-//     id: "5",
-//     type: "machine",
-//     position: { x: 100, y: 100 },
-//     data: {
-//       machine_id: "5",
-//       name: "Machine 5",
-//       sensors: {},
-//       manufacturer: "C",
-//       prediction_status: true,
-//     },
-//   },
-//   {
-//     id: "6",
-//     type: "machine",
-//     position: { x: 100, y: 100 },
-//     data: {
-//       machine_id: "6",
-//       name: "Machine 6",
-//       sensors: {},
-//       manufacturer: "C",
-//       prediction_status: true,
-//     },
-//   },
-//   {
-//     id: "7",
-//     type: "machine",
-//     position: { x: 100, y: 100 },
-//     data: {
-//       machine_id: "7",
-//       name: "Machine 7",
-//       sensors: {},
-//       manufacturer: "D",
-//       prediction_status: true,
-//     },
-//   },
-//   {
-//     id: "8",
-//     type: "machine",
-//     position: { x: 100, y: 100 },
-//     data: {
-//       machine_id: "8",
-//       name: "Machine 8",
-//       sensors: {},
-//       manufacturer: "E",
-//       prediction_status: true,
-//     },
-//   },
-//   {
-//     id: "9",
-//     type: "machine",
-//     position: { x: 100, y: 100 },
-//     data: {
-//       machine_id: "9",
-//       name: "Machine 9",
-//       sensors: {},
-//       manufacturer: "F",
-//       prediction_status: true,
-//     },
-//   },
-// ];
 
-// const edgesData: EdgeWithHead[] = [
-//   { id: "e1-2", head: "1", source: "1", target: "2", animated: true },
-//   { id: "e3-4", head: "3", source: "3", target: "4", animated: true },
-//   { id: "e5-6", head: "5", source: "5", target: "6", animated: true },
-//   { id: "e2-7", head: "1", source: "2", target: "7", animated: true },
-//   { id: "e4-7", head: "3", source: "4", target: "7", animated: true },
-//   { id: "e6-7", head: "5", source: "6", target: "7", animated: true },
-//   { id: "e7-8", head: "1", source: "7", target: "8", animated: true },
-//   { id: "e8-9", head: "1", source: "8", target: "9", animated: true },
-// ];
+const calculateDistanceFromHead = (
+  machine_id: string,
+  head_ids: string[],
+  edges: Edge[],
+  distance = 1
+): { distance: number; head_id: string } => {
+  machine_id = machine_id.toString();
+  head_ids = head_ids.map((id) => id.toString());
 
-const calculateDistanceFromHead = (machine_id: string, head_ids: string[], edges: Edge[], distance = 1): { distance: number, head_id: string } => {
-  if (head_ids.find(head_id => head_id == machine_id)) return { distance, head_id: machine_id };
-  const relevant_edges = edges.filter((edge) => edge.target == machine_id);
-  let machine_heads = relevant_edges.map((edge) => calculateDistanceFromHead(edge.source, head_ids, edges, distance + 1));
-  machine_heads = machine_heads.sort((a, b) => a.distance - b.distance);
+  if (head_ids.includes(machine_id)) {
+    return { distance, head_id: machine_id };
+  }
+
+  const relevant_edges = edges.filter(
+    (edge) => edge.target.toString() === machine_id
+  );
+
+  if (relevant_edges.length === 0) {
+    console.warn(`No edges found for machine_id: ${machine_id}`);
+    return { distance: Infinity, head_id: "" };
+  }
+
+  const machine_heads = relevant_edges
+    .map((edge) =>
+      calculateDistanceFromHead(edge.source.toString(), head_ids, edges, distance + 1)
+    )
+    .filter((result) => result !== undefined);
+
+  if (machine_heads.length === 0) {
+    console.warn(` No valid heads found for machine_id: ${machine_id}`);
+    return { distance: Infinity, head_id: "" };
+  }
+
+  machine_heads.sort((a, b) => a.distance - b.distance);
   return machine_heads[0];
-}
-
-const setMachinesPosition = (machines: Node<Machine>[], edges: EdgeWithHead[]) => {
-  const x_offset = 400;
-  const y_offset = 400;
-  const flow_head_ids: FlowHead[] = [...new Set(edges.map((edge) => edge.head))].map((id, index) => ({ id, y: y_offset * (index + 1) }));
-  const updatedMachines = machines.map((machine) => {
-    const { distance, head_id } = calculateDistanceFromHead(machine.id, flow_head_ids.map((flow_head) => flow_head.id), edges);
-    const head = flow_head_ids.find((flow_head) => flow_head.id == head_id);
-    return {
-      ...machine,
-      position: { x: x_offset * distance, y: head?.y || y_offset },
-    }
-  });
-  return updatedMachines;
 };
 
-const machineCardTypes: NodeTypes = {
+const setMachinesPosition = (
+  machines: Node<Machine>[],
+  edges: EdgeWithHead[]
+): Node<Machine>[] => {
+  if (!machines.length || !edges.length) {
+    console.warn(" No machines or edges found!");
+    return machines;
+  }
+  const x_offset = 400; 
+  const y_offset = 300; 
+  const flow_head_ids: FlowHead[] = [
+    ...new Set(
+      edges
+        .filter((edge) => edge.head !== undefined && edge.head !== null)
+        .map((edge) => edge.head.toString())
+    ),
+  ].map((id, index) => ({ id, y: y_offset * (index + 1) }));
+
+  return machines.map((machine) => {
+    if (!machine.id) {
+      console.warn(" Machine missing ID:", machine);
+      return { ...machine, position: { x: x_offset, y: y_offset } };
+    }
+
+    const { distance, head_id } = calculateDistanceFromHead(
+      machine.id.toString(),
+      flow_head_ids.map((fh) => fh.id),
+      edges
+    );
+
+    if (!head_id) {
+      console.warn(` No head_id found for machine ${machine.id}, using default.`);
+    }
+
+    const head = flow_head_ids.find((fh) => fh.id === head_id);
+    const x = isNaN(distance) || !isFinite(distance) ? x_offset : x_offset * distance;
+    const y = head?.y && isFinite(head.y) ? head.y : y_offset;
+
+    return {
+      ...machine,
+      position: { x, y },
+    };
+  });
+};
+
+
+const nodeTypes: NodeTypes = {
   machine: MachineCard,
 };
 
-const parseMachines = ({ machines }) => {
-  return machines.map((machine: Machine) => ({
-    id: machine.machine_id,
+const parseMachines = ({ machines }: { machines: Machine[] }): Node<Machine>[] => {
+  return machines.map((machine, index) => ({
+    id: machine.machine_id.toString(),
     type: "machine",
     data: machine,
+    position: { x: 200 * (index % 5), y: 200 * Math.floor(index / 5) },
   }));
 };
 
-const parseEdges = ({ edges }) => {
-  return edges.map((edge: Edge) => ({
-    ...edge,
-    animated: true,
-  }));
+const parseEdges = ({ edges }: { edges: EdgeWithHead[] }): Edge[] => {
+  if (!edges || !Array.isArray(edges)) {
+    console.error(" Edges data is invalid:", edges);
+    return [];
+  }
+  return edges
+    .filter(
+      (edge) =>
+        edge &&
+        edge.id !== undefined &&
+        edge.source !== undefined &&
+        edge.target !== undefined
+    )
+    .map((edge) => ({
+      id: edge.id.toString(),
+      source: edge.source.toString(),
+      target: edge.target.toString(),
+      animated: true,
+      type: "smoothstep",
+      head: edge.head, 
+    }));
 };
+
 
 const MachineGrid: React.FC = () => {
-  const [edges, setEdges] = useState<Edge[]>([]);
-  const [machines, setMachines] = useState<Node<Machine>[]>([]);
+const [edges, setEdges] = useState<Edge[]>([]);
+const [machines, setMachines] = useState<Node<Machine>[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const edgesResponse = await axios.get(`${SERVER_ADDRESS}/getAllEdges/1`);
-      const edgesData = parseEdges(edgesResponse.data);
+      try {
+      
+        const edgesResponse = await axios.get(`${SERVER_ADDRESS}/getAllEdges/1`);
+        const edgesData = parseEdges({ edges: edgesResponse.data.edges });
+        const machinesResponse = await axios.get(`${SERVER_ADDRESS}/getTaggedByFactory/1`);
+        const machinesData = parseMachines({ machines: machinesResponse.data.machines });
+        const positionedMachines = setMachinesPosition(machinesData, edgesData as EdgeWithHead[]);
 
-      const machinesResponse = await axios.get(`${SERVER_ADDRESS}/getTaggedByFactory/1`);
-      const machinesData = parseMachines(machinesResponse.data);
-
-      const positionedMachines = setMachinesPosition(machinesData, edgesData);
-
-      setEdges(edgesData);
-      console.log(positionedMachines);
-      setMachines(positionedMachines);
+        setEdges(edgesData);
+        setMachines(positionedMachines);
+      } catch (error) {
+        console.error(" Error fetching data:", error);
+      }
     };
-
     fetchData();
   }, []);
 
   return (
-    <div style={{ width: "100vw", height: "90vh" }}>
+    <div style={{ width: "100vw", height: "90vh", border: "1px solid red" }}>
       <h2 style={{ textAlign: "center", marginBottom: "10px" }}>Factory Grid</h2>
       <ReactFlow
         nodes={machines}
         edges={edges}
-        nodeTypes={machineCardTypes}
+        nodeTypes={nodeTypes}
         fitView
         panOnDrag
         zoomOnScroll={false}
