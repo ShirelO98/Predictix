@@ -16,7 +16,7 @@ export default function DashboardHome() {
     axios.get(`${SERVER_ADDRESS}/getTaggedByFactory/1`).then((response) => {
       setFactoryMachines(response.data.machines);
       setOverview({
-        needs_maintenance_machines: response.data.machines.filter((machine: Machine) => machine.prediction_status != 1).length,
+        needs_maintenance_machines: response.data.machines.filter((machine: Machine) => machine.prediction_status != true).length,
         total_machines: response.data.machines.length
       });
     });
@@ -24,7 +24,7 @@ export default function DashboardHome() {
 
   return (
     <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" sx={{ fontWeight: "bold", fontFamily: "sans-serif" }}>
         Dashboard Overview
       </Typography>
       <Box sx={{ mb: 4 }}>

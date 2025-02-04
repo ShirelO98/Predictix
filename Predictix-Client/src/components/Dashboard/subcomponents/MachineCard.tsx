@@ -2,25 +2,17 @@ import React, { useState } from "react";
 import { Card, CardContent, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import { Handle, Position } from "reactflow";
 import { Machine } from "../../../types/machine";
-
 interface MachineCardProps {
   data: Machine;
 }
-
 const MachineCard: React.FC<MachineCardProps> = ({ data: machine }) => {
-  
   const [open, setOpen] = useState(false);
-
-
   const handleOpen = () => {
     setOpen(true);
   };
-
- 
   const handleClose = () => {
     setOpen(false);
   };
-
   return (
     <>
       <Card
@@ -39,10 +31,10 @@ const MachineCard: React.FC<MachineCardProps> = ({ data: machine }) => {
         }}
       >
         <CardContent>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold", fontFamily: "sans-serif" }}>
             {machine.name}
           </Typography>
-          <Typography variant="body2" sx={{ color: "gray" }}>
+          <Typography variant="body2" sx={{ fontWeight: "bold", fontFamily: "sans-serif" }}>
             {machine.manufacturer}
           </Typography>
         </CardContent>
@@ -52,13 +44,13 @@ const MachineCard: React.FC<MachineCardProps> = ({ data: machine }) => {
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>{machine.name} - Details</DialogTitle>
         <DialogContent dividers>
-          <Typography variant="subtitle1">
+          <Typography variant="subtitle1" sx={{ fontWeight: "bold", fontFamily: "sans-serif" }}>
             <strong>Manufacturer:</strong> {machine.manufacturer}
           </Typography>
-          <Typography variant="subtitle1">
+          <Typography variant="subtitle1" sx={{ fontWeight: "bold", fontFamily: "sans-serif" }}>
             <strong>Machine ID:</strong> {machine.machine_id}
           </Typography>
-          <Typography variant="subtitle1">
+          <Typography variant="subtitle1"sx={{ fontWeight: "bold", fontFamily: "sans-serif" }}>
             <strong>Prediction Status:</strong> {machine.prediction_status ? "Good" : "Warning"}
           </Typography>
           {machine.down_time !== undefined && (

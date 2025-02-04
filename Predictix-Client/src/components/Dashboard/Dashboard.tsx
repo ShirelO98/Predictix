@@ -1,10 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import BuildIcon from "@mui/icons-material/Build";
 import {
   AppProvider,
   type Router,
@@ -13,7 +10,6 @@ import {
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import logo from "../../assets/logo.png";
 import PageContent from "../Login/PageContent";
-import LogoutButton from "../Login/LogoutButton";
 
 const NAVIGATION: Navigation = [
   {
