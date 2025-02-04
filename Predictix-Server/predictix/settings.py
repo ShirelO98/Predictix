@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-)ozb*_g4uxz(h_ex=b$0h&ie4gcytq2%juz8=ymnhtxx3(t#91
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["predictix-1he9.onrender.com", "localhost", "127.0.0.1"]
 
 # Application definition
 
