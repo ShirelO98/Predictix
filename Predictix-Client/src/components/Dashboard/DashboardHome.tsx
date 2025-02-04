@@ -24,7 +24,7 @@ export default function DashboardHome() {
 
   return (
     <Box sx={{ p: 4 }}>
-      <Typography variant="h4" sx={{ fontWeight: "bold", fontFamily: "sans-serif" }}>
+      <Typography variant="h4" sx={{fontFamily: "sans-serif" }}>
         Dashboard Overview
       </Typography>
       <Box sx={{ mb: 4 }}>

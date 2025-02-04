@@ -31,10 +31,10 @@ const MachineCard: React.FC<MachineCardProps> = ({ data: machine }) => {
         }}
       >
         <CardContent>
-        <Typography variant="h6" sx={{ fontWeight: "bold", fontFamily: "sans-serif" }}>
+        <Typography variant="h6" sx={{fontFamily: "sans-serif", fontSize: "2rem" }}>
             {machine.name}
           </Typography>
-          <Typography variant="body2" sx={{ fontWeight: "bold", fontFamily: "sans-serif" }}>
+          <Typography variant="body2" sx={{fontFamily: "sans-serif", fontSize: "1.5rem" }}>
             {machine.manufacturer}
           </Typography>
         </CardContent>

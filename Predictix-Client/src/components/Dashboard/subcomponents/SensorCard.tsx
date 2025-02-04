@@ -56,7 +56,7 @@ const SensorCard: React.FC<SensorCardProps> = ({ machine }) => {
       }}
     >
       {/* Machine Name */}
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "8px" }}>
+      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "8px", fontFamily: "sans-serif" }}>
         {machine_name}
       </Typography>
 
@@ -82,6 +82,8 @@ const SensorCard: React.FC<SensorCardProps> = ({ machine }) => {
           <Box key={sensor.sensorName} sx={{ flex: "1 1 45%" }}>
             <Typography
               variant="body1"
+              fontFamily={"sans-serif"}
+              
               sx={getSensorStyles(sensor)}
             >
               {sensor.sensorName.charAt(0).toUpperCase() + sensor.sensorName.slice(1)}
